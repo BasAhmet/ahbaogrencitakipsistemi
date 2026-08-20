@@ -1,0 +1,15 @@
+{
+  "name": "ozel-ders-asistanim",
+  "version": "1.0.0",
+  "description": "Öğrenci ödev ve takip sistemi",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ejs": "^3.1.9",
+    "firebase-admin": "^11.11.0",
+    "dotenv": "^16.3.1"
+  }
+}
