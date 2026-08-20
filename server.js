@@ -1,0 +1,26 @@
+const express = require('express');
+const path = require('path');
+
+const app = express();
+
+// EJS Şablon Motoru Ayarları
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Statik Dosyalar (CSS, JS, Resimler) public klasöründen okunacak
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Gelen form verilerini okuyabilmek için
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Geçici Test Rotası
+app.get('/', (req, res) => {
+    res.send('Özel Ders Asistanı başarıyla çalışıyor!');
+});
+
+// Sunucuyu Başlat
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Sunucu ${PORT} portunda ayağa kalktı.`);
+});
