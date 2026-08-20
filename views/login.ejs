@@ -1,1 +1,98 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş | Özel Ders Asistanım</title>
+    <!-- Geliştirme aşamasında hızlı test için Tailwind CDN ekliyoruz -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 flex items-center justify-center min-h-screen p-4">
+    
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <!-- Başlık Bölümü -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 mb-4">
+                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0v6"></path>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800">Özel Ders Asistanım</h1>
+            <p class="text-gray-500 mt-2 text-sm">Ödev ve Gelişim Takip Platformu</p>
+        </div>
 
+        <!-- Öğrenci / Veli Sekmeleri -->
+        <div class="flex mb-6 bg-slate-100 rounded-lg p-1">
+            <button type="button" id="btnStudent" onclick="switchTab('ogrenci')" 
+                class="flex-1 py-2 rounded-md bg-white shadow text-blue-600 font-semibold transition-all text-sm">
+                Öğrenci Girişi
+            </button>
+            <button type="button" id="btnParent" onclick="switchTab('veli')" 
+                class="flex-1 py-2 rounded-md text-slate-500 font-medium hover:text-slate-700 transition-all text-sm">
+                Veli Girişi
+            </button>
+        </div>
+
+        <!-- Giriş Formu -->
+        <form action="/login" method="POST" class="space-y-5">
+            <!-- Arka planda sunucuya hangi yetkiyle girildiğini bildiren gizli alan -->
+            <input type="hidden" id="girisTipi" name="girisTipi" value="ogrenci">
+
+            <div>
+                <label class="block text-slate-700 text-sm font-bold mb-2" for="kullaniciAdi">
+                    Öğrenci Adı Soyadı
+                </label>
+                <input type="text" id="kullaniciAdi" name="kullaniciAdi" required
+                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" 
+                    placeholder="Örn: Ahmet Yılmaz">
+            </div>
+
+            <div>
+                <label class="block text-slate-700 text-sm font-bold mb-2" for="kursNumarasi">
+                    Kurs Numarası <span class="font-normal text-slate-400 text-xs">(Şifre)</span>
+                </label>
+                <input type="password" id="kursNumarasi" name="kursNumarasi" required
+                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" 
+                    placeholder="Örn: 1042">
+            </div>
+
+            <button type="submit" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg shadow-blue-200 mt-4">
+                Sisteme Giriş Yap
+            </button>
+        </form>
+    </div>
+
+    <!-- Sekme Değiştirme Animasyonu İçin Basit JS -->
+    <script>
+        function switchTab(type) {
+            const btnStudent = document.getElementById('btnStudent');
+            const btnParent = document.getElementById('btnParent');
+            const inputTip = document.getElementById('girisTipi');
+            
+            // Aktif ve pasif butonlar için Tailwind sınıf listeleri
+            const activeClasses = ['bg-white', 'shadow', 'text-blue-600', 'font-semibold'];
+            const inactiveClasses = ['text-slate-500', 'font-medium', 'hover:text-slate-700'];
+
+            if (type === 'ogrenci') {
+                inputTip.value = 'ogrenci';
+                
+                btnStudent.classList.add(...activeClasses);
+                btnStudent.classList.remove(...inactiveClasses);
+                
+                btnParent.classList.remove(...activeClasses);
+                btnParent.classList.add(...inactiveClasses);
+            } else {
+                inputTip.value = 'veli';
+                
+                btnParent.classList.add(...activeClasses);
+                btnParent.classList.remove(...inactiveClasses);
+                
+                btnStudent.classList.remove(...activeClasses);
+                btnStudent.classList.add(...inactiveClasses);
+            }
+        }
+    </script>
+</body>
+</html>
