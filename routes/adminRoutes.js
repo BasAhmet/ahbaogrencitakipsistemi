@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 // Az önce yazdığımız veritabanı fonksiyonunu içe aktarıyoruz
-const { addStudent } = require('../services/userService');
+const { addStudent } = require('../services/userService'); 
 
 // Öğretmen Yönetim Paneli Ana Sayfası
 router.get('/dashboard', (req, res) => {
     res.render('admin/dashboard');
 });
 
-// Öğrenciler Sayfasını Gösterme Rotası (YENİ EKLENEN)
+// Öğrenciler Sayfasını Gösterme Rotası
 router.get('/students', (req, res) => {
     res.render('admin/students');
 });
