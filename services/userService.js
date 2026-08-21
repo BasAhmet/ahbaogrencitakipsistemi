@@ -1,31 +1,35 @@
-const { db } = require('../config/firebase');
+const admin = require('firebase-admin');
+const db = admin.firestore();
 
-// Öğrenci Ekleme Fonksiyonu
+// 1. Yeni Öğrenci Ekleme Fonksiyonu
 const addStudent = async (studentData) => {
     try {
-        // Öğrencinin kurs numarasını ID olarak belirliyoruz ki girişte bulması kolay olsun
-        const docRef = db.collection('users').doc(studentData.kursNumarasi);
-        await docRef.set({
-            isim: studentData.isim,
+        // Öğrencinin kurs numarasını veritabanında "kimlik (ID)" olarak kullanıyoruz.
+        // Böylece aynı numaradan iki tane olamaz ve arama yaparken şimşek hızında buluruz.
+        await db.collection('students').doc(studentData.kursNumarasi).set({
+            adSoyad: studentData.adSoyad,
+            sinif: studentData.sinif,
             kursNumarasi: studentData.kursNumarasi,
-            rol: 'ogrenci',
-            kayitTarihi: new Date().toISOString()
+            kayitTarihi: new Date()
         });
-        return { success: true, id: studentData.kursNumarasi };
+        return true;
     } catch (error) {
-        console.error("Öğrenci ekleme hatası:", error);
-        return { success: false, error: error.message };
+        console.error("Öğrenci Firebase'e eklenirken hata:", error);
+        throw error;
     }
 };
 
-// Giriş Ekranı İçin Öğrenci Arama Fonksiyonu
+// 2. Giriş Yaparken Öğrenciyi Bulma Fonksiyonu
 const getStudentByNumber = async (kursNumarasi) => {
     try {
-        const doc = await db.collection('users').doc(kursNumarasi).get();
-        if (!doc.exists) return null; // Öğrenci bulunamadı
-        return doc.data(); // Öğrenci bilgilerini döndür
+        const doc = await db.collection('students').doc(kursNumarasi).get();
+        if (doc.exists) {
+            return doc.data();
+        } else {
+            return null; // Öğrenci bulunamadı
+        }
     } catch (error) {
-        console.error("Öğrenci arama hatası:", error);
+        console.error("Öğrenci aranırken hata:", error);
         return null;
     }
 };
