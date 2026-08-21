@@ -1,36 +1,33 @@
 const { getStudentByNumber } = require('../services/userService');
 
-// Giriş İşlemini Yöneten Fonksiyon
 const loginProcess = async (req, res) => {
-    // login.ejs'deki formdan gelen verileri alıyoruz
     const { kullaniciAdi, kursNumarasi, girisTipi } = req.body;
 
     try {
-        // 1. Adım: Veritabanından kurs numarasına göre öğrenciyi bul
+        // 1. DURUM: EĞER GİRİŞ YAPAN KİŞİ ÖĞRETMENSE
+        if (girisTipi === 'admin') {
+            // Sizin için şimdilik sabit bir şifre belirliyoruz (Örn: 12345)
+            // Girişte Ad Soyad kısmına ne yazarsanız yazın, şifre 12345 ise panele girersiniz.
+            if (kursNumarasi === '12345') {
+                return res.redirect('/admin/dashboard');
+            } else {
+                return res.send("Hata: Öğretmen şifresi yanlış!");
+            }
+        }
+
+        // 2. DURUM: EĞER GİRİŞ YAPAN KİŞİ ÖĞRENCİ VEYA VELİ İSE
         const student = await getStudentByNumber(kursNumarasi);
 
-        // Eğer veritabanında böyle bir numara yoksa
+        // Veritabanında öğrenci yoksa uyarı ver
         if (!student) {
-            // Şimdilik basit bir mesaj döndürüyoruz, ileride ekrana şık bir uyarı basarız
             return res.send("Hata: Bu kurs numarasına ait bir öğrenci bulunamadı.");
         }
 
-        // İsteğe bağlı: İsim eşleşiyor mu diye kontrol edilebilir (Şimdilik numara yeterli)
-
-        // 2. Adım: Hangi butona tıklandığına göre yönlendirme yap
+        // Öğrenci varsa yetkisine göre yönlendir
         if (girisTipi === 'veli') {
-            console.log(`[GİRİŞ] Veli paneline yönlendiriliyor: ${student.isim}`);
-            // Veli paneline, öğrencinin ID'si ile yönlendir
             return res.redirect(`/veli/dashboard?id=${kursNumarasi}`);
-            
         } else if (girisTipi === 'ogrenci') {
-            console.log(`[GİRİŞ] Öğrenci paneline yönlendiriliyor: ${student.isim}`);
-            // Öğrenci paneline, öğrencinin ID'si ile yönlendir
             return res.redirect(`/ogrenci/dashboard?id=${kursNumarasi}`);
-            
-        } else if (girisTipi === 'admin') {
-            // İleride kendi (öğretmen) girişinizi buradan yönlendirebiliriz
-            return res.redirect('/admin/dashboard');
         }
 
     } catch (error) {
