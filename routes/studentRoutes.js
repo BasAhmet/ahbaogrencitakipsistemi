@@ -1,22 +1,24 @@
 const express = require('express');
 const router = express.Router();
+const { getStudentByNumber, getHomeworksByStudentId } = require('../services/userService');
 
 // Öğrenci Paneli Ana Sayfası
-router.get('/dashboard', (req, res) => {
-    // Şimdilik sadece tasarımı render ediyoruz. 
-    // İleride buraya URL'den gelen id'ye göre öğrencinin gerçek verilerini çeken kodları ekleyeceğiz.
-    res.render('student/dashboard');
-});
+router.get('/dashboard', async (req, res) => {
+    const studentId = req.query.id; // URL'deki id parametresi (örneğin: ?id=5566)
 
-// Ödev Teslim İşlemi (Form gönderildiğinde çalışacak)
-router.post('/odev-teslim', (req, res) => {
-    // Formdan gelen Doğru, Yanlış, Boş ve Yapılamayan Soru verileri burada yakalanacak.
-    const { odevId, dogru, yanlis, bos, yapilamayanSorular } = req.body;
-    console.log("Ödev Teslim Edildi:", req.body);
-    
-    // Şimdilik aynı sayfaya geri yönlendiriyoruz.
-    res.redirect('/ogrenci/dashboard');
+    try {
+        const student = await getStudentByNumber(studentId);
+        const homeworks = await getHomeworksByStudentId(studentId);
+
+        // Öğrenci bulunamazsa bile sayfa çökmesin diye varsayılan isim geçiyoruz
+        res.render('ogrenci/dashboard', { 
+            student: student || { adSoyad: 'Öğrenci' }, 
+            homeworks: homeworks || [] 
+        });
+    } catch (error) {
+        console.error("Öğrenci paneli yüklenirken hata:", error);
+        res.render('ogrenci/dashboard', { student: { adSoyad: 'Öğrenci' }, homeworks: [] });
+    }
 });
 
 module.exports = router;
-
