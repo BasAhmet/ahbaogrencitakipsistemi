@@ -36,7 +36,7 @@ router.post('/homework-complete', async (req, res) => {
         await completeHomework(homeworkId, { dogru, yanlis, bos, yapilamayanlar });
         
         // İşlem başarılı olunca öğrenciyi kendi paneline geri gönderiyoruz
-        res.redirect(`/student/dashboard?id=${studentId}`);
+        res.redirect(`/ogrenci/dashboard?id=${studentId}`);
     } catch (error) {
         console.error("Ödev teslim hatası:", error);
         res.send("Ödev kaydedilirken bir hata oluştu: " + error.message);
