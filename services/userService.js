@@ -69,5 +69,29 @@ const addHomework = async (homeworkData) => {
     }
 };
 
+// 5. YENİ EKLENEN: Öğrencinin Ödevlerini Getirme Fonksiyonu
+const getHomeworksByStudentId = async (ogrenciId) => {
+    try {
+        const snapshot = await db.collection('homeworks')
+            .where('ogrenciId', '==', ogrenciId)
+            .get();
+        
+        const homeworks = [];
+        snapshot.forEach(doc => {
+            homeworks.push({ id: doc.id, ...doc.data() });
+        });
+        return homeworks;
+    } catch (error) {
+        console.error("Öğrenci ödevleri getirilirken hata:", error);
+        return [];
+    }
+};
+
 // Modülleri dışa aktarmayı güncelledik
-module.exports = { addStudent, getStudentByNumber, getAllStudents, addHomework };
+module.exports = { 
+    addStudent, 
+    getStudentByNumber, 
+    getAllStudents, 
+    addHomework, 
+    getHomeworksByStudentId 
+};
