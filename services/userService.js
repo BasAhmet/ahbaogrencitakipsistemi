@@ -50,5 +50,24 @@ const getAllStudents = async () => {
     }
 };
 
+// 4. YENİ EKLENEN: Ödev Atama Fonksiyonu
+const addHomework = async (homeworkData) => {
+    try {
+        // 'homeworks' adında yeni bir koleksiyon (klasör) oluşturup ödevleri oraya kaydediyoruz
+        await db.collection('homeworks').add({
+            ogrenciId: homeworkData.ogrenciId, // Hangi öğrenciye atandığı (Kurs Numarası)
+            kitap: homeworkData.kitap,         // Örn: LGS Matematik Soru Bankası
+            konu: homeworkData.konu,           // Örn: Çarpanlar ve Katlar - Test 3
+            sonTarih: homeworkData.sonTarih,   // Örn: Yarın, 24 Ekim vs.
+            durum: 'Bekliyor',                 // İlk atandığında öğrenci çözmediği için 'Bekliyor'
+            eklenmeTarihi: new Date()
+        });
+        return true;
+    } catch (error) {
+        console.error("Ödev eklenirken hata:", error);
+        throw error;
+    }
+};
+
 // Modülleri dışa aktarmayı güncelledik
-module.exports = { addStudent, getStudentByNumber, getAllStudents };
+module.exports = { addStudent, getStudentByNumber, getAllStudents, addHomework };
