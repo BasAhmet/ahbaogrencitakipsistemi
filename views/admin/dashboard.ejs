@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yönetim Paneli | Özel Ders Asistanım</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- İkonlar için FontAwesome ekliyoruz -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 font-sans flex h-screen overflow-hidden">
+
+    <!-- SOL MENÜ (SIDEBAR) -->
+    <aside class="w-64 bg-slate-800 text-white flex flex-col h-full shadow-2xl">
+        <div class="p-6 text-center border-b border-slate-700">
+            <i class="fa-solid fa-graduation-cap text-3xl text-blue-400 mb-2"></i>
+            <h2 class="text-xl font-bold tracking-wider">Asistanım</h2>
+            <p class="text-slate-400 text-xs mt-1">Öğretmen Paneli</p>
+        </div>
+        
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <a href="/admin/dashboard" class="flex items-center px-4 py-3 bg-blue-600 text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-chart-line w-6"></i>
+                <span class="font-medium">Genel Bakış</span>
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-users w-6"></i>
+                <span class="font-medium">Öğrenciler</span>
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-book w-6"></i>
+                <span class="font-medium">Dijital Kitaplık</span>
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-pen-to-square w-6"></i>
+                <span class="font-medium">Ödev Ata</span>
+            </a>
+        </nav>
+        
+        <div class="p-4 border-t border-slate-700">
+            <a href="/logout" class="flex items-center justify-center px-4 py-2 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition-colors text-sm font-medium">
+                <i class="fa-solid fa-sign-out-alt mr-2"></i> Çıkış Yap
+            </a>
+        </div>
+    </aside>
+
+    <!-- ANA İÇERİK ALANI -->
+    <main class="flex-1 flex flex-col h-full overflow-y-auto">
+        
+        <!-- Üst Bar -->
+        <header class="bg-white shadow-sm px-8 py-5 flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-slate-800">Genel Bakış</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-sm font-medium text-slate-600">Hoş Geldiniz, Öğretmenim</span>
+                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold border-2 border-blue-200">
+                    Ö
+                </div>
+            </div>
+        </header>
+
+        <!-- İçerik -->
+        <div class="p-8 space-y-6">
+            
+            <!-- İstatistik Kartları -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Kart 1 -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex items-center">
+                    <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-2xl mr-4">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-slate-500">Kayıtlı Öğrenci</p>
+                        <h3 class="text-2xl font-bold text-slate-800">12</h3>
+                    </div>
+                </div>
+                <!-- Kart 2 -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex items-center">
+                    <div class="w-14 h-14 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-2xl mr-4">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-slate-500">Bekleyen Ödev</p>
+                        <h3 class="text-2xl font-bold text-slate-800">5</h3>
+                    </div>
+                </div>
+                <!-- Kart 3 (En Önemlisi) -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex items-center">
+                    <div class="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center text-red-500 text-2xl mr-4">
+                        <i class="fa-solid fa-circle-question"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-slate-500">Çözülecek Sorular</p>
+                        <h3 class="text-2xl font-bold text-slate-800">8</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Son Ödevler Tablosu -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-slate-800">Son Atanan Ödevler</h3>
+                    <button class="text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-md font-medium transition-colors">
+                        + Yeni Ödev Ata
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-200">
+                                <th class="px-6 py-4 font-medium">Öğrenci</th>
+                                <th class="px-6 py-4 font-medium">Kaynak & Konu</th>
+                                <th class="px-6 py-4 font-medium">Durum</th>
+                                <th class="px-6 py-4 font-medium">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <!-- Örnek Satır 1 -->
+                            <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-slate-800">Ali Yılmaz</td>
+                                <td class="px-6 py-4">
+                                    <div class="text-slate-800">LGS Soru Bankası</div>
+                                    <div class="text-slate-500 text-xs">Çarpanlar ve Katlar - Test 2</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Tamamlandı
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <button class="text-blue-600 hover:text-blue-800 font-medium">İncele</button>
+                                </td>
+                            </tr>
+                            <!-- Örnek Satır 2 -->
+                            <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-slate-800">Zeynep Kaya</td>
+                                <td class="px-6 py-4">
+                                    <div class="text-slate-800">8. Sınıf Branş Denemesi</div>
+                                    <div class="text-slate-500 text-xs">Üslü İfadeler - Deneme 1</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                        Bekliyor
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <button class="text-slate-400 cursor-not-allowed font-medium" disabled>İncele</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>
