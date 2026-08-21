@@ -26,14 +26,14 @@
                 <span class="text-2xl">🥇</span>
                 <div>
                     <p class="text-xs text-blue-100">Aktif Ödevler</p>
-                    <p class="text-lg font-bold"><%= homeworks.length %></p>
+                    <p class="text-lg font-bold"><%= aktifOdevler.length %></p>
                 </div>
             </div>
             <div class="bg-white/10 backdrop-blur-md p-3 rounded-xl flex items-center space-x-3">
                 <span class="text-2xl">✅</span>
                 <div>
                     <p class="text-xs text-blue-100">Tamamlanan</p>
-                    <p class="text-lg font-bold">0</p>
+                    <p class="text-lg font-bold"><%= tamamlananOdevler.length %></p>
                 </div>
             </div>
         </div>
@@ -42,9 +42,8 @@
     <!-- GÖREV LİSTESİ -->
     <main class="max-w-lg mx-auto p-4 mt-4 space-y-4">
         <h2 class="text-lg font-bold text-slate-800 mb-2">Bekleyen Görevlerim</h2>
-
-        <% if (homeworks && homeworks.length > 0) { %>
-            <% homeworks.forEach(function(hw) { %>
+        <% if (aktifOdevler && aktifOdevler.length > 0) { %>
+            <% aktifOdevler.forEach(function(hw) { %>
                 <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-4">
                     <div class="flex justify-between items-start">
                         <div>
