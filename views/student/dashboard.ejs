@@ -60,6 +60,7 @@
                     <!-- Ödev Sonuç Formu -->
                     <form action="/ogrenci/homework-complete" method="POST" class="space-y-3 pt-2 border-t border-slate-100">
                         <input type="hidden" name="homeworkId" value="<%= hw.id %>">
+                        <input type="hidden" name="studentId" value="<%= student.kursNumarasi %>">
                         
                         <div class="grid grid-cols-3 gap-2 text-center">
                             <div>
