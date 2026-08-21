@@ -15,10 +15,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Geçici Test Rotası
-app.get('/', (req, res) => {
-    res.send('Özel Ders Asistanı başarıyla çalışıyor!');
-});
+// Rotaları (Routes) İçe Aktarma
+const indexRoutes = require('./routes/indexRoutes');
+
+// Rotaları Kullanma
+app.use('/', indexRoutes);
+
 
 // Sunucuyu Başlat
 const PORT = process.env.PORT || 3000;
