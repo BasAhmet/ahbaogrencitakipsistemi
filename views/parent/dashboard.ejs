@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veli Takip Paneli | Özel Ders Asistanım</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 font-sans pb-10">
+
+    <!-- Üst Bilgi Barı (Veli Teması: Mor) -->
+    <header class="bg-purple-700 text-white shadow-md rounded-b-3xl pb-6 pt-8 px-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <p class="text-purple-200 text-sm font-medium mb-1">Veli Takip Ekranı</p>
+                <h1 class="text-2xl font-bold">Ahmet Yılmaz</h1>
+                <p class="text-purple-300 text-xs mt-1">Öğrenci Durum Özeti</p>
+            </div>
+            <a href="/logout" class="bg-purple-800/50 hover:bg-purple-900 p-3 rounded-full transition-colors">
+                <i class="fa-solid fa-sign-out-alt"></i>
+            </a>
+        </div>
+        
+        <!-- Veli İstatistik Özeti -->
+        <div class="flex gap-4 mt-6">
+            <div class="bg-white/10 rounded-xl p-4 flex-1 backdrop-blur-sm">
+                <p class="text-purple-100 text-xs mb-1">Genel Başarı</p>
+                <p class="text-xl font-bold"><i class="fa-solid fa-chart-pie text-green-300 mr-2"></i>%85</p>
+            </div>
+            <div class="bg-white/10 rounded-xl p-4 flex-1 backdrop-blur-sm">
+                <p class="text-purple-100 text-xs mb-1">Teslim Edilen</p>
+                <p class="text-xl font-bold"><i class="fa-solid fa-check-double text-blue-300 mr-2"></i>12 Ödev</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="px-5 space-y-6 max-w-md mx-auto">
+        
+        <!-- Öğrencinin Aktif Görevleri -->
+        <h2 class="text-lg font-bold text-slate-800 px-1 border-b border-slate-200 pb-2">Aktif Ödev Durumu</h2>
+
+        <!-- Bekleyen Ödev Kartı (Form Yok, Sadece Bilgi) -->
+        <div class="bg-white rounded-2xl shadow-sm border-l-4 border-l-amber-500 overflow-hidden p-5">
+            <div class="flex justify-between items-start mb-2">
+                <span class="bg-amber-100 text-amber-700 text-xs font-bold px-2.5 py-1 rounded-md"><i class="fa-regular fa-clock mr-1"></i>Bekliyor</span>
+                <span class="text-xs font-medium text-slate-400">Son: Yarın</span>
+            </div>
+            <h3 class="font-bold text-slate-800 text-lg mb-1 mt-2">LGS Matematik Soru Bankası</h3>
+            <p class="text-slate-500 text-sm mb-3">Çarpanlar ve Katlar - Test 3 (20 Soru)</p>
+            <div class="bg-slate-50 p-3 rounded-lg text-sm text-slate-600 flex items-center">
+                <i class="fa-solid fa-circle-info text-amber-500 mr-2"></i> Öğrencinin ödevi tamamlaması bekleniyor.
+            </div>
+        </div>
+
+        <!-- Geçmiş Performans -->
+        <h2 class="text-lg font-bold text-slate-800 px-1 border-b border-slate-200 pb-2 mt-8">Sonuçlanan Ödevler</h2>
+
+        <!-- Tamamlanmış Ödev Kartı -->
+        <div class="bg-white rounded-2xl shadow-sm border-l-4 border-l-green-500 p-5">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="font-bold text-slate-700">Üslü İfadeler - Test 1</h3>
+                <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-md"><i class="fa-solid fa-check mr-1"></i>Tamamlandı</span>
+            </div>
+            
+            <!-- Veliye Özel Performans Çubuğu -->
+            <div class="mt-4 bg-slate-50 p-3 rounded-lg">
+                <div class="flex justify-between text-xs font-bold mb-2">
+                    <span class="text-green-600">18 Doğru</span>
+                    <span class="text-red-600">1 Yanlış</span>
+                    <span class="text-slate-500">1 Boş</span>
+                </div>
+                <!-- Basit CSS İlerleme Çubuğu -->
+                <div class="w-full h-2 bg-slate-200 rounded-full flex overflow-hidden">
+                    <div class="bg-green-500 h-full" style="width: 90%"></div>
+                    <div class="bg-red-500 h-full" style="width: 5%"></div>
+                    <div class="bg-slate-400 h-full" style="width: 5%"></div>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-3"><i class="fa-solid fa-chalkboard-user mr-1 text-blue-500"></i>Öğretmen yapılamayan 2 soruyu derste çözecektir.</p>
+            </div>
+        </div>
+
+    </main>
+</body>
+</html>
