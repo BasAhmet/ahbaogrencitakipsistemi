@@ -17,10 +17,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rotaları (Routes) İçe Aktarma
 const indexRoutes = require('./routes/indexRoutes');
+const adminRoutes = require('./routes/adminRoutes'); // Bunu yeni ekledik
 
 // Rotaları Kullanma
 app.use('/', indexRoutes);
-
+app.use('/admin', adminRoutes); // Bunu yeni ekledik (/admin ile başlayan tüm linkler buraya gidecek)
 
 // Sunucuyu Başlat
 const PORT = process.env.PORT || 3000;
