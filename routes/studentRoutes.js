@@ -12,12 +12,17 @@ router.get('/dashboard', async (req, res) => {
         }
 
         const student = await getStudentByNumber(studentId);
-        const homeworks = await getHomeworksByStudentId(studentId);
+        // Tüm ödevleri çekiyoruz (eğer ödev yoksa boş liste döndürüyoruz)
+        const allHomeworks = await getHomeworksByStudentId(studentId) || [];
 
-        // İŞTE ÇÖZÜM BURADA: 'ogrenci/dashboard' yerine 'student/dashboard' klasörüne gidiyoruz!
+        // İŞTE YENİ EKLENEN KISIM: Ödevleri durumlarına göre ikiye ayırıyoruz
+        const aktifOdevler = allHomeworks.filter(hw => hw.durum === 'Bekliyor');
+        const tamamlananOdevler = allHomeworks.filter(hw => hw.durum === 'Tamamlandı');
+
         res.render('student/dashboard', { 
             student: student || { adSoyad: 'Kayıt Bulunamadı' }, 
-            homeworks: homeworks || [] 
+            aktifOdevler: aktifOdevler,
+            tamamlananOdevler: tamamlananOdevler
         });
         
     } catch (error) {
