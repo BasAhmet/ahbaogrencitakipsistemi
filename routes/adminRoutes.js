@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-// getAllStudents fonksiyonunu da dahil ettik
-const { addStudent, getAllStudents } = require('../services/userService'); 
+
+const { addStudent, getAllStudents, addHomework } = require('../services/userService');
 
 // Öğretmen Yönetim Paneli Ana Sayfası
 router.get('/dashboard', (req, res) => {
@@ -30,6 +30,31 @@ router.post('/student-add', async (req, res) => {
     } catch (error) {
         console.error("Kayıt hatası:", error);
         res.send("Öğrenci eklenirken sistemsel bir hata oluştu.");
+    }
+});
+
+// Ödev Ata Sayfasını Gösterme
+router.get('/homework', async (req, res) => {
+    try {
+        // Öğretmen kime ödev vereceğini seçebilsin diye kayıtlı öğrencileri çekiyoruz
+        const studentsList = await getAllStudents(); 
+        res.render('admin/homework', { students: studentsList });
+    } catch (error) {
+        console.error("Ödev sayfası yüklenemedi:", error);
+        res.render('admin/homework', { students: [] });
+    }
+});
+
+// Ödevi Veritabanına Kaydetme İşlemi (POST)
+router.post('/homework-add', async (req, res) => {
+    const { ogrenciId, kitap, konu, sonTarih } = req.body;
+    try {
+        await addHomework({ ogrenciId, kitap, konu, sonTarih });
+        // Kayıt başarılıysa sayfayı yenile
+        res.redirect('/admin/homework'); 
+    } catch (error) {
+        console.error("Ödev atanırken hata:", error);
+        res.send("Ödev atanırken sistemsel bir hata oluştu.");
     }
 });
 
