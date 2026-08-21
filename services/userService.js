@@ -87,11 +87,31 @@ const getHomeworksByStudentId = async (ogrenciId) => {
     }
 };
 
+// 6. YENİ EKLENEN: Ödevi Tamamlama ve Sonuçları Kaydetme
+const completeHomework = async (homeworkId, results) => {
+    try {
+        // İlgili ödevi bul ve verilerini güncelle
+        await db.collection('homeworks').doc(homeworkId).update({
+            durum: 'Tamamlandı', // Bekliyor durumunu Tamamlandı yapıyoruz
+            dogru: results.dogru,
+            yanlis: results.yanlis,
+            bos: results.bos,
+            yapilamayanlar: results.yapilamayanlar || '',
+            tamamlanmaTarihi: new Date()
+        });
+        return true;
+    } catch (error) {
+        console.error("Ödev güncellenirken hata:", error);
+        throw error;
+    }
+};
+
 // Modülleri dışa aktarmayı güncelledik
 module.exports = { 
     addStudent, 
     getStudentByNumber, 
     getAllStudents, 
     addHomework, 
-    getHomeworksByStudentId 
+    getHomeworksByStudentId,
+    completeHomework
 };
