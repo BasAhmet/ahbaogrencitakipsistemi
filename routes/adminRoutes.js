@@ -1,29 +1,31 @@
 const express = require('express');
 const router = express.Router();
-// Az önce yazdığımız veritabanı fonksiyonunu içe aktarıyoruz
-const { addStudent } = require('../services/userService'); 
+// getAllStudents fonksiyonunu da dahil ettik
+const { addStudent, getAllStudents } = require('../services/userService'); 
 
 // Öğretmen Yönetim Paneli Ana Sayfası
 router.get('/dashboard', (req, res) => {
     res.render('admin/dashboard');
 });
 
-// Öğrenciler Sayfasını Gösterme Rotası
-router.get('/students', (req, res) => {
-    res.render('admin/students');
+// Öğrenciler Sayfasını Gösterme Rotası (GÜNCELLENDİ)
+router.get('/students', async (req, res) => {
+    try {
+        // Veritabanından öğrencileri çek
+        const studentsList = await getAllStudents();
+        // Sayfaya (EJS'ye) bu listeyi 'students' adıyla gönder
+        res.render('admin/students', { students: studentsList });
+    } catch (error) {
+        console.error("Öğrenciler yüklenemedi:", error);
+        res.render('admin/students', { students: [] });
+    }
 });
 
-// YENİ ÖĞRENCİ EKLEME İŞLEMİ (Veritabanına Kayıt)
+// Yeni Öğrenci Ekleme İşlemi (POST)
 router.post('/student-add', async (req, res) => {
     const { adSoyad, sinif, kursNumarasi } = req.body;
-    
     try {
-        // Firebase'e kaydet
         await addStudent({ adSoyad, sinif, kursNumarasi });
-        
-        console.log(`${adSoyad} başarıyla sisteme eklendi.`);
-        
-        // Kayıt başarılıysa sayfayı yenile (ileride buraya başarılı mesajı da ekleyeceğiz)
         res.redirect('/admin/students');
     } catch (error) {
         console.error("Kayıt hatası:", error);
