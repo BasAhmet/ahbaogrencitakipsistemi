@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getStudentByNumber, getHomeworksByStudentId } = require('../services/userService');
+const { getStudentByNumber, getHomeworksByStudentId, completeHomework } = require('../services/userService');
 
 // Öğrenci Paneli Ana Sayfası
 router.get('/dashboard', async (req, res) => {
@@ -23,6 +23,23 @@ router.get('/dashboard', async (req, res) => {
     } catch (error) {
         console.error("Öğrenci paneli hatası:", error);
         res.send("Sunucu hatası oluştu: " + error.message);
+    }
+});
+
+// Ödev Teslim İşlemi (POST)
+router.post('/homework-complete', async (req, res) => {
+    // Formdan gelen verileri yakalıyoruz
+    const { homeworkId, studentId, dogru, yanlis, bos, yapilamayanlar } = req.body;
+
+    try {
+        // Firebase'deki ödevi sonuçlarla güncelliyoruz
+        await completeHomework(homeworkId, { dogru, yanlis, bos, yapilamayanlar });
+        
+        // İşlem başarılı olunca öğrenciyi kendi paneline geri gönderiyoruz
+        res.redirect(`/student/dashboard?id=${studentId}`);
+    } catch (error) {
+        console.error("Ödev teslim hatası:", error);
+        res.send("Ödev kaydedilirken bir hata oluştu: " + error.message);
     }
 });
 
