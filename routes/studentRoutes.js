@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // Veritabanı fonksiyonlarımızı çağırıyoruz
-const { getStudentByNumber, getHomeworksByStudentId } = require('../services/userService');
+const { getStudentByNumber, getHomeworksByStudentId, completeHomework } = require('../services/userService');
 
 // 1. Öğrenci Giriş Sayfasını Gösterme
 router.get('/login', (req, res) => {
@@ -66,5 +66,22 @@ const renderDashboard = async (req, res) => {
 // Hem /dashboard?id=301 hem de /dashboard/301 adreslerini dinliyoruz
 router.get('/dashboard', renderDashboard);
 router.get('/dashboard/:id', renderDashboard);
+
+// YENİ EKLENEN ROTA: Formdan gelen sonuçları yakalama
+router.post('/odev-tamamla', async (req, res) => {
+    // Formdaki inputların name değerlerini çekiyoruz
+    const { odevId, kursNumarasi, dogru, yanlis, bos } = req.body;
+
+    try {
+        // Veritabanı fonksiyonumuzu çağırıp sonuçları işliyoruz
+        await completeHomework(odevId, dogru, yanlis, bos);
+
+        // İşlem bitince öğrenciyi kendi paneline geri yolluyoruz
+        res.redirect(`/ogrenci/dashboard?id=${kursNumarasi}`);
+    } catch (error) {
+        console.error("Ödev tamamlama hatası:", error);
+        res.send("Sonuçlar kaydedilirken bir hata oluştu.");
+    }
+});
 
 module.exports = router;
