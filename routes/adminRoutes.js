@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { addStudent, getAllStudents, addHomework } = require('../services/userService');
+const { addStudent, getAllStudents, addHomework, deleteStudent } = require('../services/userService');
 
 // Öğretmen Yönetim Paneli Ana Sayfası
 router.get('/dashboard', (req, res) => {
@@ -55,6 +55,17 @@ router.post('/homework-add', async (req, res) => {
     } catch (error) {
         console.error("Ödev atanırken hata:", error);
         res.send("Ödev atanırken sistemsel bir hata oluştu.");
+    }
+});
+
+// ÖĞRENCİ SİLME ROTASI
+router.get('/student-delete/:id', async (req, res) => {
+    try {
+        await deleteStudent(req.params.id);
+        res.redirect('/admin/students'); // Sildikten sonra listeye geri dön
+    } catch (error) {
+        console.error("Silme hatası:", error);
+        res.redirect('/admin/students');
     }
 });
 
