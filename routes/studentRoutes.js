@@ -1,50 +1,58 @@
 const express = require('express');
 const router = express.Router();
-const { getStudentByNumber, getHomeworksByStudentId, completeHomework } = require('../services/userService');
 
-// Öğrenci Paneli Ana Sayfası
-router.get('/dashboard', async (req, res) => {
+// Veritabanı fonksiyonlarımızı çağırıyoruz
+const { getStudentByNumber, getHomeworksByStudentId } = require('../services/userService');
+
+// 1. Öğrenci Giriş Sayfasını Gösterme
+router.get('/login', (req, res) => {
+    // Sayfa ilk açıldığında hata yok
+    res.render('student/login', { error: null });
+});
+
+// 2. Öğrenci Giriş İşlemi (Form Gönderildiğinde)
+router.post('/login', async (req, res) => {
+    const { kursNumarasi } = req.body;
+
     try {
-        const studentId = req.query.id; 
+        // Veritabanında bu numaraya sahip öğrenciyi ara
+        const student = await getStudentByNumber(kursNumarasi);
 
-        if (!studentId) {
-            return res.send("Hata: Şifre (ID) bulunamadı! Lütfen giriş ekranından tekrar girin.");
+        if (student) {
+            // Öğrenci bulunduysa, onun numarasıyla dashboard'a (panele) yönlendir
+            res.redirect(`/ogrenci/dashboard/${kursNumarasi}`);
+        } else {
+            // Öğrenci bulunamadıysa hata mesajı ile giriş sayfasına geri gönder
+            res.render('student/login', { error: 'Hatalı kurs numarası girdiniz. Lütfen tekrar deneyin.' });
         }
-
-        const student = await getStudentByNumber(studentId);
-        // Tüm ödevleri çekiyoruz (eğer ödev yoksa boş liste döndürüyoruz)
-        const allHomeworks = await getHomeworksByStudentId(studentId) || [];
-
-        // İŞTE YENİ EKLENEN KISIM: Ödevleri durumlarına göre ikiye ayırıyoruz
-        const aktifOdevler = allHomeworks.filter(hw => hw.durum === 'Bekliyor');
-        const tamamlananOdevler = allHomeworks.filter(hw => hw.durum === 'Tamamlandı');
-
-        res.render('student/dashboard', { 
-            student: student || { adSoyad: 'Kayıt Bulunamadı' }, 
-            aktifOdevler: aktifOdevler,
-            tamamlananOdevler: tamamlananOdevler
-        });
-        
     } catch (error) {
-        console.error("Öğrenci paneli hatası:", error);
-        res.send("Sunucu hatası oluştu: " + error.message);
+        console.error("Giriş hatası:", error);
+        res.render('student/login', { error: 'Sistemsel bir hata oluştu, lütfen daha sonra deneyin.' });
     }
 });
 
-// Ödev Teslim İşlemi (POST)
-router.post('/homework-complete', async (req, res) => {
-    // Formdan gelen verileri yakalıyoruz
-    const { homeworkId, studentId, dogru, yanlis, bos, yapilamayanlar } = req.body;
+// 3. Öğrenci Özel Paneli (Dashboard)
+router.get('/dashboard/:id', async (req, res) => {
+    const kursNumarasi = req.params.id;
 
     try {
-        // Firebase'deki ödevi sonuçlarla güncelliyoruz
-        await completeHomework(homeworkId, { dogru, yanlis, bos, yapilamayanlar });
+        // Güvenlik: Adresteki numaraya ait öğrenci gerçekten var mı?
+        const student = await getStudentByNumber(kursNumarasi);
         
-        // İşlem başarılı olunca öğrenciyi kendi paneline geri gönderiyoruz
-        res.redirect(`/ogrenci/dashboard?id=${studentId}`);
+        if (!student) {
+            // Yoksa giriş sayfasına geri postala
+            return res.redirect('/ogrenci/login');
+        }
+
+        // Öğrencinin sistemdeki tüm ödevlerini Firebase'den çek
+        const homeworks = await getHomeworksByStudentId(kursNumarasi);
+
+        // Öğrenci verilerini ve ödevlerini dashboard sayfasına gönder
+        res.render('student/dashboard', { student, homeworks });
+
     } catch (error) {
-        console.error("Ödev teslim hatası:", error);
-        res.send("Ödev kaydedilirken bir hata oluştu: " + error.message);
+        console.error("Panel yüklenme hatası:", error);
+        res.send("Panel yüklenirken bir hata oluştu.");
     }
 });
 
