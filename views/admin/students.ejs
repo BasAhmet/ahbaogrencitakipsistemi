@@ -125,7 +125,9 @@
                                                 </a>
                                                 
                                                 <button class="text-slate-400 hover:text-blue-600 transition-colors" title="Profili Görüntüle"><i class="fa-solid fa-eye"></i></button>
-                                                <button class="text-slate-400 hover:text-red-600 transition-colors" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                                                <a href="/admin/student-delete/<%= student.id %>" onclick="return confirm('<%= student.adSoyad %> isimli öğrenciyi sistemden silmek istediğinize emin misiniz?')" class="text-slate-400 hover:text-red-600 transition-colors" title="Sil">
+                                                <i class="fa-solid fa-trash"></i>
+                                                </a>
                                             </div>
                                         </td>
                                         <!-- İŞLEMLER ALANI BİTİŞ -->
