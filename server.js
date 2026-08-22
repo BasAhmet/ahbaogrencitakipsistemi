@@ -27,6 +27,15 @@ app.use('/admin', adminRoutes);
 app.use('/ogrenci', studentRoutes);
 app.use('/veli', parentRoutes); // Bunu yeni ekledik
 
+// ==========================================
+// ÇIKIŞ YAP (LOGOUT) ROTASI
+// ==========================================
+app.get('/logout', (req, res) => {
+    // İleride session (oturum) eklerseniz buraya oturumu kapatma kodları gelecek.
+    // Şimdilik çıkış yapana ana sayfayı gösteriyoruz:
+    res.redirect('/'); 
+});
+
 // Sunucuyu Başlat
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
