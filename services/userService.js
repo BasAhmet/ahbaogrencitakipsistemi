@@ -106,6 +106,18 @@ const completeHomework = async (homeworkId, results) => {
     }
 };
 
+// 7. Öğrenci Silme Fonksiyonu
+const deleteStudent = async (kursNumarasi) => {
+    try {
+        // Kurs numarasını document ID olarak kullandığımız için direkt siliyoruz
+        await db.collection('students').doc(kursNumarasi).delete();
+        return true;
+    } catch (error) {
+        console.error("Öğrenci silinirken hata:", error);
+        throw error;
+    }
+};
+
 // Modülleri dışa aktarmayı güncelledik
 module.exports = { 
     addStudent, 
@@ -113,5 +125,6 @@ module.exports = {
     getAllStudents, 
     addHomework, 
     getHomeworksByStudentId,
-    completeHomework
+    completeHomework,
+    deleteStudent
 };
