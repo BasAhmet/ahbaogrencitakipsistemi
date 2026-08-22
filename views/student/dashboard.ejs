@@ -100,5 +100,63 @@
         <% } %>
 
     </main>
+<!-- SONUÇ GİRME MODALI (Gizli başlar) -->
+    <div id="resultModal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-60 flex items-center justify-center z-50 px-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+            <!-- Modal Başlık -->
+            <div class="bg-blue-600 px-6 py-4 flex justify-between items-center text-white">
+                <h3 class="font-bold text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie"></i> Ödev Sonucu
+                </h3>
+                <button onclick="closeResultModal()" class="text-blue-100 hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Form -->
+            <form action="/ogrenci/odev-tamamla" method="POST" class="p-6">
+                <!-- Arka planda sunucuya gidecek gizli veriler -->
+                <input type="hidden" name="kursNumarasi" value="<%= student.kursNumarasi %>">
+                <input type="hidden" name="odevId" id="modalOdevId">
+                
+                <div class="mb-5 text-sm text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <strong id="modalKitap" class="block text-slate-800 text-base mb-1"></strong>
+                    <span id="modalKonu" class="flex items-center gap-1"><i class="fa-solid fa-book-open text-blue-400"></i></span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 mb-8">
+                    <div>
+                        <label class="block text-xs font-bold text-green-600 mb-2 uppercase tracking-wide text-center">Doğru</label>
+                        <input type="number" name="dogru" min="0" required class="w-full bg-green-50 border border-green-200 rounded-lg px-3 py-3 text-center text-lg font-bold text-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-shadow">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-red-600 mb-2 uppercase tracking-wide text-center">Yanlış</label>
+                        <input type="number" name="yanlis" min="0" required class="w-full bg-red-50 border border-red-200 rounded-lg px-3 py-3 text-center text-lg font-bold text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide text-center">Boş</label>
+                        <input type="number" name="bos" min="0" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-3 text-center text-lg font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 transition-shadow">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-blue-200 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Kaydet ve Tamamla
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Kontrol Scripti -->
+    <script>
+        function openResultModal(odevId, kitap, konu) {
+            document.getElementById('modalOdevId').value = odevId;
+            document.getElementById('modalKitap').innerText = kitap;
+            document.getElementById('modalKonu').innerHTML = `<i class="fa-solid fa-book-open text-blue-400 mr-2"></i> ${konu}`;
+            document.getElementById('resultModal').classList.remove('hidden');
+        }
+        function closeResultModal() {
+            document.getElementById('resultModal').classList.add('hidden');
+        }
+    </script>
 </body>
 </html>
