@@ -38,6 +38,12 @@
         </div>
 
         <!-- Giriş Formu -->
+        <!-- Hata mesajı varsa gösterilecek alan -->
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4 flex items-center shadow-sm border border-red-100">
+                <i class="fa-solid fa-circle-exclamation mr-2"></i> <%= error %>
+            </div>
+        <% } %>
         <form action="/login" method="POST" class="space-y-5">
             <input type="hidden" id="girisTipi" name="girisTipi" value="ogrenci">
 
