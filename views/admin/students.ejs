@@ -30,7 +30,8 @@
                 <i class="fa-solid fa-book w-6"></i>
                 <span class="font-medium ml-3">Dijital Kitaplık</span>
             </a>
-            <a href="#" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-colors">
+            <!-- LİNK GÜNCELLENDİ -->
+            <a href="/admin/homework" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-colors">
                 <i class="fa-solid fa-pen-to-square w-6"></i>
                 <span class="font-medium ml-3">Ödev Ata</span>
             </a>
@@ -77,6 +78,7 @@
                     </div>
                 </form>
             </div>
+            
             <!-- MEVCUT ÖĞRENCİLER LİSTESİ -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
@@ -112,10 +114,22 @@
                                         <td class="px-6 py-4 text-center font-mono text-slate-700">
                                             <%= student.kursNumarasi %>
                                         </td>
-                                        <td class="px-6 py-4 text-center">
-                                            <button class="text-blue-500 hover:text-blue-700 mx-2 transition-colors" title="Profili Görüntüle"><i class="fa-solid fa-eye"></i></button>
-                                            <button class="text-red-500 hover:text-red-700 mx-2 transition-colors" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                                        
+                                        <!-- YENİ İŞLEMLER ALANI -->
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center justify-center space-x-3">
+                                                <!-- SİHİRLİ KISAYOL BUTONU BURADA -->
+                                                <a href="/admin/homework?ogrenciId=<%= student.kursNumarasi %>" 
+                                                   class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center shadow-sm">
+                                                    <i class="fa-solid fa-pen-to-square mr-1"></i> Ödev Ver
+                                                </a>
+                                                
+                                                <button class="text-slate-400 hover:text-blue-600 transition-colors" title="Profili Görüntüle"><i class="fa-solid fa-eye"></i></button>
+                                                <button class="text-slate-400 hover:text-red-600 transition-colors" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                                            </div>
                                         </td>
+                                        <!-- İŞLEMLER ALANI BİTİŞ -->
+                                        
                                     </tr>
                                 <% }); %>
                             </tbody>
