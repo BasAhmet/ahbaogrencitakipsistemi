@@ -67,7 +67,24 @@
                         
                         <h4 class="font-bold text-lg text-slate-800 mb-1"><%= hw.kitap %></h4>
                         <p class="text-slate-600 text-sm mb-4"><%= hw.konu %></p>
-                        
+                        <% if (hw.durum !== 'Tamamlandı') { %>
+                            <button onclick="openResultModal('<%= hw.id %>', '<%= hw.kitap %>', '<%= hw.konu %>')" 
+                                class="w-full bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold py-2.5 rounded-lg transition-colors border border-blue-100 flex items-center justify-center gap-2 mt-2">
+                                <i class="fa-solid fa-pen"></i> Sonucu Gir
+                            </button>
+                        <% } else if (hw.sonuclar) { %>
+                            <div class="grid grid-cols-3 gap-2 mt-2 pt-4 border-t border-slate-100 text-center">
+                                <div class="bg-green-50 text-green-700 py-1.5 rounded-md text-sm font-bold flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-check"></i> <%= hw.sonuclar.dogru %>
+                                </div>
+                                <div class="bg-red-50 text-red-700 py-1.5 rounded-md text-sm font-bold flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-xmark"></i> <%= hw.sonuclar.yanlis %>
+                                </div>
+                                <div class="bg-slate-50 text-slate-600 py-1.5 rounded-md text-sm font-bold flex items-center justify-center gap-1">
+                                    <i class="fa-regular fa-circle"></i> <%= hw.sonuclar.bos %>
+                                </div>
+                            </div>
+                        <% } %>
                     </div>
                 <% }) %>
             </div>
