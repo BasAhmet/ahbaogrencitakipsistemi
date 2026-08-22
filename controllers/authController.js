@@ -6,12 +6,11 @@ const loginProcess = async (req, res) => {
     try {
         // 1. DURUM: EĞER GİRİŞ YAPAN KİŞİ ÖĞRETMENSE
         if (girisTipi === 'admin') {
-            // Sizin için şimdilik sabit bir şifre belirliyoruz (Örn: 12345)
-            // Girişte Ad Soyad kısmına ne yazarsanız yazın, şifre 12345 ise panele girersiniz.
             if (kursNumarasi === '12345') {
                 return res.redirect('/admin/dashboard');
             } else {
-                return res.send("Hata: Öğretmen şifresi yanlış!");
+                // Hata mesajını şık kutuya gönderiyoruz
+                return res.render('login', { error: 'Öğretmen şifresi yanlış!' });
             }
         }
 
@@ -20,10 +19,20 @@ const loginProcess = async (req, res) => {
 
         // Veritabanında öğrenci yoksa uyarı ver
         if (!student) {
-            return res.send("Hata: Bu kurs numarasına ait bir öğrenci bulunamadı.");
+            return res.render('login', { error: 'Bu kurs numarasına ait bir öğrenci bulunamadı.' });
         }
 
-        // Öğrenci varsa yetkisine göre yönlendir
+        // --- YENİ EKLENEN KISIM: AKILLI İSİM KONTROLÜ ---
+        // Veritabanındaki ve formdan gelen ismin boşluklarını silip küçük harfe çevirerek karşılaştırıyoruz
+        const dbName = student.adSoyad.toLowerCase().trim();
+        const inputName = kullaniciAdi.toLowerCase().trim();
+
+        if (dbName !== inputName) {
+            return res.render('login', { error: 'Girdiğiniz Ad Soyad, bu Kurs Numarası ile eşleşmiyor.' });
+        }
+        // ------------------------------------------------
+
+        // Öğrenci varsa ve isim doğruysa yetkisine göre yönlendir
         if (girisTipi === 'veli') {
             return res.redirect(`/veli/dashboard?id=${kursNumarasi}`);
         } else if (girisTipi === 'ogrenci') {
@@ -32,7 +41,7 @@ const loginProcess = async (req, res) => {
 
     } catch (error) {
         console.error("Giriş işlemi sırasında hata:", error);
-        return res.status(500).send("Sistemsel bir hata oluştu, lütfen tekrar deneyin.");
+        return res.render('login', { error: 'Sistemsel bir hata oluştu, lütfen tekrar deneyin.' });
     }
 };
 
