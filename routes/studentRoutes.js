@@ -11,15 +11,25 @@ router.get('/login', (req, res) => {
 
 // 2. Öğrenci Giriş İşlemi (POST)
 router.post('/login', async (req, res) => {
-    const { kursNumarasi } = req.body;
+    const { kursNumarasi, adSoyad } = req.body;
 
     try {
         const student = await getStudentByNumber(kursNumarasi);
 
         if (student) {
-            // query param (?id=301) formatında yönlendiriyoruz
-            res.redirect(`/ogrenci/dashboard?id=${kursNumarasi}`);
+            // Veritabanındaki isim ile girilen ismi küçük harfe çevirip, başındaki/sonundaki boşlukları siliyoruz
+            const dbName = student.adSoyad.toLowerCase().trim();
+            const inputName = adSoyad.toLowerCase().trim();
+
+            if (dbName === inputName) {
+                // İsimler eşleşiyorsa panele al
+                res.redirect(`/ogrenci/dashboard?id=${kursNumarasi}`);
+            } else {
+                // İsim yanlışsa uyarı ver
+                res.render('student/login', { error: 'Girdiğiniz Ad Soyad, bu Kurs Numarası ile eşleşmiyor.' });
+            }
         } else {
+            // Numara komple yanlışsa
             res.render('student/login', { error: 'Hatalı kurs numarası girdiniz. Lütfen tekrar deneyin.' });
         }
     } catch (error) {
