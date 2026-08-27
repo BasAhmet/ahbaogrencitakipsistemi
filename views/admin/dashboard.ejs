@@ -116,47 +116,42 @@
                             </tr>
                         </thead>
                         <tbody class="text-sm">
-                        <!-- Örnek Satır 1 (Tamamlanmış Ödev) -->
-                        <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4 font-medium text-slate-800">Ali Yılmaz</td>
-                            <td class="px-6 py-4">
-                                <div class="text-slate-800">LGS Soru Bankası</div>
-                                <div class="text-slate-500 text-xs">Çarpanlar ve Katlar - Test 2</div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    Tamamlandı
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <!-- İNCELE BUTONU BURADA GÜNCELLENDİ -->
-                                <button onclick="openReviewModal('Ali Yılmaz', 'LGS Soru Bankası', 'Çarpanlar ve Katlar - Test 2', 'Tamamlandı', 15, 3, 2)" 
-                                    class="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
-                                    İncele <i class="fa-solid fa-arrow-right-long text-xs"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <!-- Örnek Satır 2 (Bekleyen Ödev) -->
-                        <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4 font-medium text-slate-800">Zeynep Kaya</td>
-                            <td class="px-6 py-4">
-                                <div class="text-slate-800">8. Sınıf Branş Denemesi</div>
-                                <div class="text-slate-500 text-xs">Üslü İfadeler - Deneme 1</div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                                    Bekliyor
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <!-- BEKLEYEN ÖDEV İÇİN İNCELE BUTONU -->
-                                <button onclick="openReviewModal('Zeynep Kaya', '8. Sınıf Branş Denemesi', 'Üslü İfadeler - Deneme 1', 'Bekliyor', 0, 0, 0)" 
-                                    class="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
-                                    İncele <i class="fa-solid fa-arrow-right-long text-xs"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
+    <% if (sonOdevler.length > 0) { %>
+        <% sonOdevler.forEach(odev => { %>
+            <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                <td class="px-6 py-4 font-medium text-slate-800"><%= odev.ogrenciAd %></td>
+                <td class="px-6 py-4">
+                    <div class="text-slate-800"><%= odev.kitap %></div>
+                    <div class="text-slate-500 text-xs"><%= odev.konu %></div>
+                </td>
+                <td class="px-6 py-4">
+                    <% if (odev.durum === 'Tamamlandı') { %>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Tamamlandı
+                        </span>
+                    <% } else { %>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                            Bekliyor
+                        </span>
+                    <% } %>
+                </td>
+                <td class="px-6 py-4">
+                    <button onclick="openReviewModal('<%= odev.ogrenciAd %>', '<%= odev.kitap %>', '<%= odev.konu %>', '<%= odev.durum %>', <%= odev.sonuclar ? odev.sonuclar.dogru : 0 %>, <%= odev.sonuclar ? odev.sonuclar.yanlis : 0 %>, <%= odev.sonuclar ? odev.sonuclar.bos : 0 %>)" 
+                        class="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
+                        İncele <i class="fa-solid fa-arrow-right-long text-xs"></i>
+                    </button>
+                </td>
+            </tr>
+        <% }) %>
+    <% } else { %>
+        <tr>
+            <td colspan="4" class="px-6 py-8 text-center text-slate-500">
+                Henüz hiç ödev atanmamış.
+            </td>
+        </tr>
+    <% } %>
+</tbody>
+
                     </table>
                 </div>
             </div>
