@@ -121,7 +121,25 @@ const deleteStudent = async (kursNumarasi) => {
     }
 };
 
-// Modülleri dışa aktarmayı güncelledik
+// 8. Öğretmen paneli için tüm ödevleri getirme
+const getAllHomeworks = async () => {
+    try {
+        const snapshot = await db.collection('homeworks').orderBy('eklenmeTarihi', 'desc').get();
+        const homeworks = [];
+        
+        snapshot.forEach(doc => {
+            homeworks.push({ id: doc.id, ...doc.data() });
+        });
+        
+        return homeworks;
+    } catch (error) {
+        console.error("Tüm ödevler getirilirken hata:", error);
+        return [];
+    }
+};
+
+
+// Modülleri dışa aktarma
 module.exports = { 
     addStudent, 
     getStudentByNumber, 
@@ -129,5 +147,6 @@ module.exports = {
     addHomework, 
     getHomeworksByStudentId,
     completeHomework,
-    deleteStudent
+    deleteStudent,
+    getAllHomeworks
 };
