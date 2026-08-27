@@ -1,14 +1,51 @@
 const express = require('express');
 const router = express.Router();
 
-const { addStudent, getAllStudents, addHomework, deleteStudent } = require('../services/userService');
+const { addStudent, getAllStudents, addHomework, deleteStudent, getAllHomeworks } = require('../services/userService');
 
 // Öğretmen Yönetim Paneli Ana Sayfası
-router.get('/dashboard', (req, res) => {
-    res.render('admin/dashboard');
+router.get('/dashboard', async (req, res) => {
+    try {
+        // 1. Veritabanından tüm verileri çek
+        const ogrenciler = await getAllStudents();
+        const odevler = await getAllHomeworks();
+
+        // 2. Ödevler koleksiyonunda sadece öğrenci numarası var, isimlerini eşleştirelim
+        const ogrenciIsimleri = {};
+        ogrenciler.forEach(ogr => {
+            ogrenciIsimleri[ogr.kursNumarasi] = ogr.adSoyad;
+        });
+
+        const detayliOdevler = odevler.map(odev => ({
+            ...odev,
+            ogrenciAd: ogrenciIsimleri[odev.ogrenciId] || 'Bilinmeyen Öğrenci'
+        }));
+
+        // 3. İstatistik kartları için matematiksel hesaplamalar
+        const kayitliOgrenci = ogrenciler.length;
+        const bekleyenOdev = odevler.filter(o => o.durum === 'Bekliyor').length;
+        const tamamlananOdev = odevler.filter(o => o.durum === 'Tamamlandı').length;
+
+        // 4. Verileri ön yüze (EJS) gönder
+        res.render('admin/dashboard', {
+            kayitliOgrenci,
+            bekleyenOdev,
+            tamamlananOdev,
+            sonOdevler: detayliOdevler.slice(0, 10) // Sadece en son atanan 10 ödevi listeler
+        });
+    } catch (error) {
+        console.error("Dashboard yüklenirken hata:", error);
+        // Hata olursa en azından sayfa boş verilerle açılsın ki sistem çökmesin
+        res.render('admin/dashboard', {
+            kayitliOgrenci: 0,
+            bekleyenOdev: 0,
+            tamamlananOdev: 0,
+            sonOdevler: []
+        });
+    }
 });
 
-// Öğrenciler Sayfasını Gösterme Rotası (GÜNCELLENDİ)
+// Öğrenciler Sayfasını Gösterme Rotası
 router.get('/students', async (req, res) => {
     try {
         // Veritabanından öğrencileri çek
