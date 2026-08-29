@@ -171,6 +171,17 @@ const getAllBooks = async () => {
     }
 };
 
+// 11. Kitaplıktan kaynak silme
+const deleteBook = async (id) => {
+    try {
+        await db.collection('kitaplar').doc(id).delete();
+        return true;
+    } catch (error) {
+        console.error("Kitap silinirken hata:", error);
+        throw error;
+    }
+};
+
 
 // Modülleri dışa aktarma
 module.exports = { 
@@ -183,5 +194,6 @@ module.exports = {
     deleteStudent,
     getAllHomeworks,
     addBook,
-    getAllBooks
+    getAllBooks,
+    deleteBook
 };
