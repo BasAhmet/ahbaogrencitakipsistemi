@@ -138,12 +138,13 @@ const getAllHomeworks = async () => {
     }
 };
 
-// YENİ: Sisteme yeni bir kitap ve konu hiyerarşisi ekleme
+// 9. Kitap, Konu ve Test/Soru Sayısı hiyerarşisi
 const addBook = async (bookData) => {
     try {
         await db.collection('kitaplar').add({
             kitapAdi: bookData.kitapAdi,
-            icerik: bookData.icerik, // Konular, test sayıları ve soru sayılarının olduğu dizi (array)
+            konu: bookData.konu,
+            testler: bookData.testler, // Test adları ve soru sayılarının olduğu dizi
             eklenmeTarihi: new Date()
         });
         return true;
@@ -153,7 +154,7 @@ const addBook = async (bookData) => {
     }
 };
 
-// 9. Ödev atama ekranı için tüm kitapları getirme
+// 10. Ödev atama ekranı için tüm kitapları getirme
 const getAllBooks = async () => {
     try {
         const snapshot = await db.collection('kitaplar').orderBy('eklenmeTarihi', 'desc').get();
