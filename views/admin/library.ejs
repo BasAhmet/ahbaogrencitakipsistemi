@@ -50,13 +50,21 @@
                 <% if (books && books.length > 0) { %>
                     <% books.forEach(book => { %>
                         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
-                            <div class="bg-indigo-50 px-6 py-4 border-b border-slate-100 flex flex-col gap-1">
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-book-open text-indigo-500"></i>
-                                    <h3 class="font-bold text-slate-800"><%= book.kitapAdi %></h3>
-                                </div>
-                                <span class="text-xs font-semibold text-indigo-600 uppercase"><%= book.konu %></span>
-                            </div>
+<div class="bg-indigo-50 px-6 py-4 border-b border-slate-100 flex justify-between items-start gap-3">
+    <div class="flex flex-col gap-1">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-book-open text-indigo-500"></i>
+            <h3 class="font-bold text-slate-800"><%= book.kitapAdi %></h3>
+        </div>
+        <span class="text-xs font-semibold text-indigo-600 uppercase"><%= book.konu %></span>
+    </div>
+    
+    <!-- YENİ EKLENEN SİL BUTONU -->
+    <a href="/admin/book-delete/<%= book.id %>" onclick="return confirm('Bu kaynağı tamamen silmek istediğinize emin misiniz?')" class="text-slate-300 hover:text-red-500 transition-colors p-1" title="Sil">
+        <i class="fa-solid fa-trash-can text-lg"></i>
+    </a>
+</div>
+
                             <div class="p-6 flex-1">
                                 <p class="text-xs font-bold text-slate-400 uppercase mb-3 border-b pb-2">İçerikteki Testler</p>
                                 <ul class="space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
