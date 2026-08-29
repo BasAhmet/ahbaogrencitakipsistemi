@@ -26,7 +26,8 @@ router.get('/dashboard', async (req, res) => {
 
         const detayliOdevler = odevler.map(odev => ({
             ...odev,
-            ogrenciAd: ogrenciIsimleri[odev.ogrenciId] || 'Bilinmeyen Öğrenci'
+            // EJS dosyamız 'ogrenciAdSoyad' ismini bekliyor, onu düzelttik:
+            ogrenciAdSoyad: ogrenciIsimleri[odev.ogrenciId] || 'Bilinmeyen Öğrenci' 
         }));
 
         // 3. İstatistik kartları için matematiksel hesaplamalar
@@ -39,7 +40,8 @@ router.get('/dashboard', async (req, res) => {
             kayitliOgrenci,
             bekleyenOdev,
             tamamlananOdev,
-            sonOdevler: detayliOdevler.slice(0, 10) // Sadece en son atanan 10 ödevi listeler
+            // 'sonOdevler' yerine EJS'nin beklediği 'homeworks' ismini kullandık!
+            homeworks: detayliOdevler.slice(0, 10) 
         });
     } catch (error) {
         console.error("Dashboard yüklenirken hata:", error);
@@ -48,7 +50,7 @@ router.get('/dashboard', async (req, res) => {
             kayitliOgrenci: 0,
             bekleyenOdev: 0,
             tamamlananOdev: 0,
-            sonOdevler: []
+            homeworks: [] // Burayı da homeworks yaptık
         });
     }
 });
