@@ -8,7 +8,8 @@ const { addStudent,
        getAllHomeworks, 
        addBook, 
        getAllBooks,
-       deleteBook
+       deleteBook,
+       assignHomework
       } = require('../services/userService');
 
 // Öğretmen Yönetim Paneli Ana Sayfası
@@ -97,33 +98,24 @@ router.get('/homework', async (req, res) => {
 
 // Ödevi Veritabanına Kaydetme İşlemi (POST)
 // GÜNCELLENEN: Yeni Ödev Ata (Mükerrer Kontrollü)
+// GÜNCELLENEN: Yeni Ödev Ata Rotası (Hatadan Arındırılmış)
 router.post('/homework-add', async (req, res) => {
     const { ogrenciId, kitap, konu, sonTarih } = req.body;
     try {
-        // 1. Aynı öğrenciye, aynı kitap ve konunun daha önce atanıp atanmadığını kontrol et
-        const mevcutOdevler = await db.collection('odevler')
-            .where('ogrenciId', '==', ogrenciId)
-            .where('kitap', '==', kitap)
-            .where('konu', '==', konu)
-            .get();
-
-        // 2. Eğer kayıt bulunduysa işlemi durdur ve uyarı ver
-        if (!mevcutOdevler.empty) {
-            return res.send("<script>alert('Hata: Bu ödev (test) bu öğrenciye daha önce atanmış!'); window.history.back();</script>");
+        // İşlemi router yerine doğrudan servise devrediyoruz
+        const sonuc = await assignHomework(ogrenciId, kitap, konu, sonTarih);
+        
+        if (!sonuc.success) {
+            // Eğer ödev zaten varsa uyarı ver ve geri dön
+            return res.send(`<script>alert('${sonuc.message}'); window.history.back();</script>`);
         }
-
-        // 3. Kayıt yoksa normal ekleme işlemini yap
-        await db.collection('odevler').add({
-            ogrenciId, kitap, konu, sonTarih, durum: 'Bekliyor', eklenmeTarihi: new Date()
-        });
         
         res.redirect('/admin/dashboard');
     } catch (error) {
-        console.error("Ödev atama hatası:", error);
-        res.send("Ödev atanırken hata oluştu.");
+        console.error("Ödev atama rotası hatası:", error);
+        res.send("Ödev atanırken sistemsel bir hata oluştu.");
     }
 });
-
 
 // ÖĞRENCİ SİLME ROTASI
 router.get('/student-delete/:id', async (req, res) => {
