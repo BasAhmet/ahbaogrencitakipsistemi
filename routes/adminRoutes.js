@@ -117,4 +117,18 @@ router.get('/library', async (req, res) => {
     }
 });
 
+// Yeni Kitap Ekleme İşlemi (POST)
+router.post('/book-add', async (req, res) => {
+    const { kitapAdi, konular } = req.body;
+    try {
+        // Konuları virgülden bölüp diziye (array) çeviriyoruz
+        const icerik = konular.split(',').map(k => k.trim()).filter(k => k.length > 0);
+        await addBook({ kitapAdi, icerik });
+        res.redirect('/admin/library');
+    } catch (error) {
+        console.error("Kitap eklenirken hata:", error);
+        res.send("Kitap eklenirken sistemsel bir hata oluştu.");
+    }
+});
+
 module.exports = router;
