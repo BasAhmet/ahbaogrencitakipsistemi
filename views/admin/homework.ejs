@@ -38,75 +38,102 @@
         </div>
     </aside>
 
-    <!-- ANA İÇERİK -->
+        <!-- ANA İÇERİK -->
     <main class="flex-1 flex flex-col h-full overflow-y-auto">
         <header class="bg-white shadow-sm px-8 py-5">
             <h1 class="text-2xl font-bold text-slate-800">Yeni Ödev Ata</h1>
+            <p class="text-sm text-slate-500 mt-1">Öğrencilerinize dijital kitaplığınızdan hızlıca ödev atayın.</p>
         </header>
 
-        <div class="p-8">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 max-w-3xl">
-                <form action="/admin/homework-add" method="POST" class="space-y-6">
-                    
-                    <!-- Öğrenci Seçimi -->
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Öğrenci Seçin</label>
-                        <select name="ogrenciId" id="ogrenciSelect" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                            <option value="">Lütfen listeden bir öğrenci seçin...</option>
-                            <% if (students && students.length > 0) { %>
-                                <% students.forEach(function(student) { %>
-                                    <option value="<%= student.kursNumarasi %>"><%= student.adSoyad %> (<%= student.sinif %>)</option>
-                                <% }); %>
-                            <% } %>
-                        </select>
-                    </div>
+        <div class="p-8 flex justify-center">
+            <form action="/admin/homework-add" method="POST" class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 w-full max-w-2xl">
+                
+                <!-- Öğrenci Seçimi -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Öğrenci Seçin</label>
+                    <select name="ogrenciId" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700">
+                        <option value="">-- Listeden Öğrenci Seçin --</option>
+                        <% students.forEach(student => { %>
+                            <option value="<%= student.kursNumarasi %>"><%= student.adSoyad %> (Kurs No: <%= student.kursNumarasi %>)</option>
+                        <% }) %>
+                    </select>
+                </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Kaynak/Kitap -->
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Kaynak / Kitap Adı</label>
-                            <input type="text" name="kitap" required placeholder="Örn: LGS Soru Bankası" 
-                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-                        
-                        <!-- Konu/Test -->
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Konu ve Test No</label>
-                            <input type="text" name="konu" required placeholder="Örn: Üslü İfadeler - Test 4" 
-                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-                    </div>
+                <!-- Kaynak (Kitap + Ünite) Seçimi -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Kaynak (Kitap ve Ünite)</label>
+                    <select id="kaynakSelect" name="kitap" onchange="updateTests()" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700">
+                        <option value="">-- Dijital Kitaplıktan Seçin --</option>
+                        <% books.forEach(book => { %>
+                            <!-- data-id ile kitabı JS'te bulabilmek için işaretliyoruz -->
+                            <option value="<%= book.kitapAdi %> - <%= book.konu %>" data-id="<%= book.id %>">
+                                <%= book.kitapAdi %> (<%= book.konu %>)
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
 
-                    <!-- Teslim Tarihi -->
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Son Teslim Günü (Opsiyonel)</label>
-                        <input type="date" name="sonTarih" placeholder="Örn: Yarın, Cuma, 12 Kasım vb." 
-                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
+                <!-- Test Seçimi (Otomatik Dolacak) -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Test Seçimi</label>
+                    <select id="testSelect" name="konu" required disabled class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                        <option value="">Önce yukarıdan bir kaynak seçmelisiniz</option>
+                    </select>
+                </div>
 
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg shadow-blue-200 mt-4">
-                        <i class="fa-solid fa-paper-plane mr-2"></i> Ödevi Öğrenciye Gönder
-                    </button>
-                </form>
-            </div>
+                <!-- Son Teslim Tarihi -->
+                <div class="mb-8">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Son Teslim Tarihi</label>
+                    <input type="date" name="sonTarih" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700">
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition-colors flex justify-center items-center gap-2 text-lg">
+                    <i class="fa-solid fa-paper-plane"></i> Ödevi Gönder
+                </button>
+            </form>
         </div>
     </main>
 
-    <!-- ÖĞRENCİYİ OTOMATİK SEÇEN SİHİRLİ KOD -->
+    <!-- DİNAMİK DROPDOWN (AÇILIR MENÜ) KONTROLÜ -->
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // URL'deki parametreleri oku
-            const urlParams = new URLSearchParams(window.location.search);
-            const hedefOgrenciId = urlParams.get('ogrenciId');
+        // Sunucudan gelen kitap verilerini JS'in anlayabileceği formata (JSON) çeviriyoruz
+        const libraryBooks = <%- JSON.stringify(books || []) %>;
+
+        function updateTests() {
+            const kaynakSelect = document.getElementById('kaynakSelect');
+            const testSelect = document.getElementById('testSelect');
             
-            // Eğer URL'de bir öğrenci ID'si varsa, dropdown'da onu seç
-            if (hedefOgrenciId) {
-                const selectKutusu = document.getElementById('ogrenciSelect');
-                if (selectKutusu) {
-                    selectKutusu.value = hedefOgrenciId;
-                }
+            // Seçilen seçeneğin (option) data-id değerini alıyoruz
+            const selectedOption = kaynakSelect.options[kaynakSelect.selectedIndex];
+            const selectedId = selectedOption.getAttribute('data-id');
+
+            // Test menüsünü sıfırla
+            testSelect.innerHTML = '<option value="">-- Test Seçin --</option>';
+            
+            if (!selectedId) {
+                testSelect.disabled = true;
+                return;
             }
-        });
+
+            // Seçilen kitabı ID'sinden bul
+            const selectedBook = libraryBooks.find(b => b.id === selectedId);
+
+            if (selectedBook && selectedBook.testler && selectedBook.testler.length > 0) {
+                testSelect.disabled = false; // Test menüsünü aktifleştir
+                
+                // Kitaptaki testleri tek tek menüye ekle
+                selectedBook.testler.forEach(test => {
+                    const option = document.createElement('option');
+                    // Veritabanına "Test 1 (20 Soru)" şeklinde kaydolmasını sağlıyoruz
+                    option.value = `${test.ad} (${test.soru} Soru)`; 
+                    option.textContent = `${test.ad} - ${test.soru} Soru`;
+                    testSelect.appendChild(option);
+                });
+            } else {
+                testSelect.disabled = true;
+                testSelect.innerHTML = '<option value="">Bu kaynakta test bulunamadı</option>';
+            }
+        }
     </script>
 </body>
 </html>
