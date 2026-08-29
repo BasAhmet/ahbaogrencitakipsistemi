@@ -97,6 +97,7 @@
 
             <!-- Son Ödevler Tablosu -->
             <!-- FİLTRELEME VE ÖDEVLER TABLOSU -->
+<!-- FİLTRELEME VE ÖDEVLER TABLOSU -->
 <div class="bg-white rounded-xl shadow-sm border border-slate-200 mt-8">
     <div class="p-6 border-b border-slate-100 flex justify-between items-center">
         <h3 class="text-lg font-bold text-slate-800">Son Atanan Ödevler</h3>
@@ -127,18 +128,13 @@
                 </tr>
             </thead>
             <tbody>
-                <% 
-                   // EJS içinde bugünün tarihini al (Örn: "2026-08-29")
-                   const bugun = new Date().toISOString().split('T')[0]; 
-                %>
+                <% const bugun = new Date().toISOString().split('T')[0]; %>
                 <% if (homeworks && homeworks.length > 0) { %>
                     <% homeworks.forEach(hw => { 
-                        // Teslim tarihi gelmiş/geçmiş ve hala bekliyorsa kırmızı yap
                         const gecikmisMi = (hw.sonTarih <= bugun) && (hw.durum === 'Bekliyor');
                         const tarihRenk = gecikmisMi ? 'text-red-600 font-bold' : 'text-slate-500';
                         const durumRenk = hw.durum === 'Tamamlandı' ? 'bg-green-100 text-green-700' : (gecikmisMi ? 'bg-red-100 text-red-700 font-bold border border-red-200' : 'bg-amber-100 text-amber-700');
                     %>
-                        <!-- data-durum özelliği filtreleme işlemi için eklendi -->
                         <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors odev-satiri" data-durum="<%= hw.durum %>">
                             <td class="px-6 py-4 font-medium text-slate-800"><%= hw.ogrenciAdSoyad || hw.ogrenciId %></td>
                             <td class="px-6 py-4">
@@ -147,7 +143,7 @@
                             </td>
                             <td class="px-6 py-4 <%= tarihRenk %>">
                                 <%= hw.sonTarih %>
-                                <% if(gecikmisMi) { %> <i class="fa-solid fa-circle-exclamation text-xs ml-1"></i> <% } %>
+                                <% if(gecikmisMi) { %> <i class="fa-solid fa-circle-exclamation text-xs ml-1" title="Süresi geçti!"></i> <% } %>
                             </td>
                             <td class="px-6 py-4">
                                 <span class="px-3 py-1 rounded-full text-xs font-bold <%= durumRenk %>">
@@ -173,17 +169,17 @@
 <script>
     function filtreleOdev(secilenDurum) {
         const satirlar = document.querySelectorAll('.odev-satiri');
-        
         satirlar.forEach(satir => {
             const satirDurum = satir.getAttribute('data-durum');
             if (secilenDurum === 'Hepsi' || satirDurum === secilenDurum) {
-                satir.style.display = ''; // Göster
+                satir.style.display = '';
             } else {
-                satir.style.display = 'none'; // Gizle
+                satir.style.display = 'none';
             }
         });
     }
 </script>
+
     </main>
 <!-- ÖĞRETMEN İNCELEME MODALI -->
     <div id="reviewModal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-60 flex items-center justify-center z-50 px-4 backdrop-blur-sm transition-opacity">
