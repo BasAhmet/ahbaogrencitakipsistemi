@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { addStudent, getAllStudents, addHomework, deleteStudent, getAllHomeworks } = require('../services/userService');
+const { addStudent, getAllStudents, addHomework, deleteStudent, getAllHomeworks, addBook, getAllBooks } = require('../services/userService');
 
 // Öğretmen Yönetim Paneli Ana Sayfası
 router.get('/dashboard', async (req, res) => {
@@ -103,6 +103,17 @@ router.get('/student-delete/:id', async (req, res) => {
     } catch (error) {
         console.error("Silme hatası:", error);
         res.redirect('/admin/students');
+    }
+});
+
+// Dijital Kitaplık Sayfasını Gösterme
+router.get('/library', async (req, res) => {
+    try {
+        const booksList = await getAllBooks();
+        res.render('admin/library', { books: booksList });
+    } catch (error) {
+        console.error("Kitaplık yüklenemedi:", error);
+        res.render('admin/library', { books: [] });
     }
 });
 
