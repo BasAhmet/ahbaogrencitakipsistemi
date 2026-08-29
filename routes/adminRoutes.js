@@ -81,12 +81,17 @@ router.post('/student-add', async (req, res) => {
 // Ödev Ata Sayfasını Gösterme
 router.get('/homework', async (req, res) => {
     try {
-        // Öğretmen kime ödev vereceğini seçebilsin diye kayıtlı öğrencileri çekiyoruz
+        // Hem öğrencileri hem de kitaplıktaki kaynakları çekiyoruz
         const studentsList = await getAllStudents(); 
-        res.render('admin/homework', { students: studentsList });
+        const booksList = await getAllBooks(); 
+
+        res.render('admin/homework', { 
+            students: studentsList,
+            books: booksList // Kitapları da EJS dosyasına gönderiyoruz
+        });
     } catch (error) {
         console.error("Ödev sayfası yüklenemedi:", error);
-        res.render('admin/homework', { students: [] });
+        res.render('admin/homework', { students: [], books: [] });
     }
 });
 
