@@ -8,8 +8,7 @@ const { addStudent,
        getAllHomeworks, 
        addBook, 
        getAllBooks,
-       deleteBook,
-       assignHomework
+       deleteBook
       } = require('../services/userService');
 
 // Öğretmen Yönetim Paneli Ana Sayfası
