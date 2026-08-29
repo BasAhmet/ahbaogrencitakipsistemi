@@ -138,6 +138,38 @@ const getAllHomeworks = async () => {
     }
 };
 
+// YENİ: Sisteme yeni bir kitap ve konu hiyerarşisi ekleme
+const addBook = async (bookData) => {
+    try {
+        await db.collection('kitaplar').add({
+            kitapAdi: bookData.kitapAdi,
+            icerik: bookData.icerik, // Konular, test sayıları ve soru sayılarının olduğu dizi (array)
+            eklenmeTarihi: new Date()
+        });
+        return true;
+    } catch (error) {
+        console.error("Kitap eklenirken hata:", error);
+        throw error;
+    }
+};
+
+// 9. Ödev atama ekranı için tüm kitapları getirme
+const getAllBooks = async () => {
+    try {
+        const snapshot = await db.collection('kitaplar').orderBy('eklenmeTarihi', 'desc').get();
+        const books = [];
+        
+        snapshot.forEach(doc => {
+            books.push({ id: doc.id, ...doc.data() });
+        });
+        
+        return books;
+    } catch (error) {
+        console.error("Kitaplar getirilirken hata:", error);
+        return [];
+    }
+};
+
 
 // Modülleri dışa aktarma
 module.exports = { 
@@ -148,5 +180,7 @@ module.exports = {
     getHomeworksByStudentId,
     completeHomework,
     deleteStudent,
-    getAllHomeworks
+    getAllHomeworks,
+    addBook,
+    getAllBooks
 };
