@@ -1,21 +1,40 @@
 const { db } = require('../config/firebase');
 
-// Öğrenciye Yeni Ödev Atama
-const assignHomework = async (assignmentData) => {
+// Mükerrer kontrollü ödev atama fonksiyonu
+const assignHomework = async (ogrenciId, kitap, konu, sonTarih) => {
     try {
-        const docRef = await db.collection('assignments').add({
-            ...assignmentData, // Öğrenci no, kitap, test no gibi veriler
-            durum: 'bekliyor',
-            verilmeTarihi: new Date().toISOString(),
-            ogretmenOnayi: false
+        // 1. Aynı öğrenciye, aynı kitap ve konunun daha önce verilip verilmediğini kontrol et
+        const mevcut = await db.collection('odevler')
+            .where('ogrenciId', '==', ogrenciId)
+            .where('kitap', '==', kitap)
+            .where('konu', '==', konu)
+            .get();
+
+        if (!mevcut.empty) {
+            return { success: false, message: "Bu ödev bu öğrenciye daha önce atanmış!" };
+        }
+
+        // 2. Tabloda öğrenci adının düzgün görünmesi için öğrenciyi bul
+        const ogrenciDoc = await db.collection('ogrenciler').where('kursNumarasi', '==', ogrenciId).get();
+        const ogrenciAdSoyad = ogrenciDoc.empty ? ogrenciId : ogrenciDoc.docs[0].data().adSoyad;
+
+        // 3. Yeni ödevi kaydet
+        await db.collection('odevler').add({
+            ogrenciId,
+            ogrenciAdSoyad,
+            kitap,
+            konu,
+            sonTarih,
+            durum: 'Bekliyor',
+            eklenmeTarihi: new Date()
         });
-        return { success: true, id: docRef.id };
+
+        return { success: true };
     } catch (error) {
-        console.error("Ödev atama hatası:", error);
-        return { success: false, error: error.message };
+        console.error("Ödev atama servis hatası:", error);
+        throw error;
     }
 };
-
 // Öğrencinin (veya Velinin) Kendi Ödevlerini Görmesi İçin
 const getAssignmentsByStudent = async (kursNumarasi) => {
     try {
@@ -34,4 +53,7 @@ const getAssignmentsByStudent = async (kursNumarasi) => {
     }
 };
 
-module.exports = { assignHomework, getAssignmentsByStudent };
+module.exports = { assignHomework, 
+                  getAssignmentsByStudent };
+
+
