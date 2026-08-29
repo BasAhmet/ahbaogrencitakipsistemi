@@ -96,17 +96,34 @@ router.get('/homework', async (req, res) => {
 });
 
 // Ödevi Veritabanına Kaydetme İşlemi (POST)
+// GÜNCELLENEN: Yeni Ödev Ata (Mükerrer Kontrollü)
 router.post('/homework-add', async (req, res) => {
     const { ogrenciId, kitap, konu, sonTarih } = req.body;
     try {
-        await addHomework({ ogrenciId, kitap, konu, sonTarih });
-        // Kayıt başarılıysa sayfayı yenile
-        res.redirect('/admin/homework'); 
+        // 1. Aynı öğrenciye, aynı kitap ve konunun daha önce atanıp atanmadığını kontrol et
+        const mevcutOdevler = await db.collection('odevler')
+            .where('ogrenciId', '==', ogrenciId)
+            .where('kitap', '==', kitap)
+            .where('konu', '==', konu)
+            .get();
+
+        // 2. Eğer kayıt bulunduysa işlemi durdur ve uyarı ver
+        if (!mevcutOdevler.empty) {
+            return res.send("<script>alert('Hata: Bu ödev (test) bu öğrenciye daha önce atanmış!'); window.history.back();</script>");
+        }
+
+        // 3. Kayıt yoksa normal ekleme işlemini yap
+        await db.collection('odevler').add({
+            ogrenciId, kitap, konu, sonTarih, durum: 'Bekliyor', eklenmeTarihi: new Date()
+        });
+        
+        res.redirect('/admin/dashboard');
     } catch (error) {
-        console.error("Ödev atanırken hata:", error);
-        res.send("Ödev atanırken sistemsel bir hata oluştu.");
+        console.error("Ödev atama hatası:", error);
+        res.send("Ödev atanırken hata oluştu.");
     }
 });
+
 
 // ÖĞRENCİ SİLME ROTASI
 router.get('/student-delete/:id', async (req, res) => {
