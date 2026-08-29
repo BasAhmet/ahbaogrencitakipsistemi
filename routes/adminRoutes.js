@@ -1,7 +1,15 @@
 const express = require('express');
 const router = express.Router();
 
-const { addStudent, getAllStudents, addHomework, deleteStudent, getAllHomeworks, addBook, getAllBooks } = require('../services/userService');
+const { addStudent, 
+       getAllStudents, 
+       addHomework, 
+       deleteStudent, 
+       getAllHomeworks, 
+       addBook, 
+       getAllBooks,
+       deleteBook
+      } = require('../services/userService');
 
 // Öğretmen Yönetim Paneli Ana Sayfası
 router.get('/dashboard', async (req, res) => {
@@ -117,7 +125,7 @@ router.get('/library', async (req, res) => {
     }
 });
 
-// GÜNCELLENEN: Yeni Kitap Ekleme İşlemi (POST)
+// Yeni Kitap Ekleme İşlemi (POST)
 router.post('/book-add', async (req, res) => {
     const { kitapAdi, konu, testAdlari, soruSayilari } = req.body;
     try {
@@ -141,6 +149,17 @@ router.post('/book-add', async (req, res) => {
     } catch (error) {
         console.error("Kitap eklenirken hata:", error);
         res.send("Kitap eklenirken sistemsel bir hata oluştu.");
+    }
+});
+
+// KİTAP SİLME ROTASI
+router.get('/book-delete/:id', async (req, res) => {
+    try {
+        await deleteBook(req.params.id);
+        res.redirect('/admin/library'); // Sildikten sonra kitaplığa geri dön
+    } catch (error) {
+        console.error("Kitap silme hatası:", error);
+        res.redirect('/admin/library');
     }
 });
 
