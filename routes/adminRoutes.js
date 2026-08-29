@@ -99,14 +99,15 @@ router.get('/homework', async (req, res) => {
 // Ödevi Veritabanına Kaydetme İşlemi (POST)
 // GÜNCELLENEN: Yeni Ödev Ata (Mükerrer Kontrollü)
 // GÜNCELLENEN: Yeni Ödev Ata Rotası (Hatadan Arındırılmış)
+const { assignHomework } = require('../services/assignmentService');
+
+// Yeni Ödev Ata (Mükerrer Kontrollü)
 router.post('/homework-add', async (req, res) => {
     const { ogrenciId, kitap, konu, sonTarih } = req.body;
     try {
-        // İşlemi router yerine doğrudan servise devrediyoruz
         const sonuc = await assignHomework(ogrenciId, kitap, konu, sonTarih);
         
         if (!sonuc.success) {
-            // Eğer ödev zaten varsa uyarı ver ve geri dön
             return res.send(`<script>alert('${sonuc.message}'); window.history.back();</script>`);
         }
         
@@ -116,6 +117,7 @@ router.post('/homework-add', async (req, res) => {
         res.send("Ödev atanırken sistemsel bir hata oluştu.");
     }
 });
+
 
 // ÖĞRENCİ SİLME ROTASI
 router.get('/student-delete/:id', async (req, res) => {
