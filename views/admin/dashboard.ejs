@@ -96,65 +96,95 @@
             </div>
 
             <!-- Son Ödevler Tablosu -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-slate-800">Son Atanan Ödevler</h3>
-                    <!-- LİNK GÜNCELLENDİ (Button yerine a etiketi yapıldı) -->
-                    <a href="/admin/homework" class="text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-md font-medium transition-colors">
-                        + Yeni Ödev Ata
-                    </a>
-                </div>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-200">
-                                <th class="px-6 py-4 font-medium">Öğrenci</th>
-                                <th class="px-6 py-4 font-medium">Kaynak & Konu</th>
-                                <th class="px-6 py-4 font-medium">Durum</th>
-                                <th class="px-6 py-4 font-medium">İşlem</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm">
-    <% if (sonOdevler.length > 0) { %>
-        <% sonOdevler.forEach(odev => { %>
-            <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                <td class="px-6 py-4 font-medium text-slate-800"><%= odev.ogrenciAd %></td>
-                <td class="px-6 py-4">
-                    <div class="text-slate-800"><%= odev.kitap %></div>
-                    <div class="text-slate-500 text-xs"><%= odev.konu %></div>
-                </td>
-                <td class="px-6 py-4">
-                    <% if (odev.durum === 'Tamamlandı') { %>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Tamamlandı
-                        </span>
-                    <% } else { %>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                            Bekliyor
-                        </span>
-                    <% } %>
-                </td>
-                <td class="px-6 py-4">
-                    <button onclick="openReviewModal('<%= odev.ogrenciAd %>', '<%= odev.kitap %>', '<%= odev.konu %>', '<%= odev.durum %>', <%= odev.sonuclar ? odev.sonuclar.dogru : 0 %>, <%= odev.sonuclar ? odev.sonuclar.yanlis : 0 %>, <%= odev.sonuclar ? odev.sonuclar.bos : 0 %>)" 
-                        class="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
-                        İncele <i class="fa-solid fa-arrow-right-long text-xs"></i>
-                    </button>
-                </td>
-            </tr>
-        <% }) %>
-    <% } else { %>
-        <tr>
-            <td colspan="4" class="px-6 py-8 text-center text-slate-500">
-                Henüz hiç ödev atanmamış.
-            </td>
-        </tr>
-    <% } %>
-</tbody>
+            <!-- FİLTRELEME VE ÖDEVLER TABLOSU -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 mt-8">
+    <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+        <h3 class="text-lg font-bold text-slate-800">Son Atanan Ödevler</h3>
+        
+        <div class="flex items-center gap-4">
+            <!-- Durum Filtresi -->
+            <select onchange="filtreleOdev(this.value)" class="bg-slate-50 border border-slate-200 text-slate-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
+                <option value="Hepsi">Tümünü Göster</option>
+                <option value="Bekliyor">Sadece Bekleyenler</option>
+                <option value="Tamamlandı">Sadece Tamamlananlar</option>
+            </select>
+            
+            <a href="/admin/homework" class="text-sm bg-blue-50 text-blue-600 font-bold px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors">
+                + Yeni Ödev Ata
+            </a>
+        </div>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+                <tr>
+                    <th class="px-6 py-4">Öğrenci</th>
+                    <th class="px-6 py-4">Kaynak & Konu</th>
+                    <th class="px-6 py-4">Son Teslim</th>
+                    <th class="px-6 py-4">Durum</th>
+                    <th class="px-6 py-4 text-right">İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% 
+                   // EJS içinde bugünün tarihini al (Örn: "2026-08-29")
+                   const bugun = new Date().toISOString().split('T')[0]; 
+                %>
+                <% if (homeworks && homeworks.length > 0) { %>
+                    <% homeworks.forEach(hw => { 
+                        // Teslim tarihi gelmiş/geçmiş ve hala bekliyorsa kırmızı yap
+                        const gecikmisMi = (hw.sonTarih <= bugun) && (hw.durum === 'Bekliyor');
+                        const tarihRenk = gecikmisMi ? 'text-red-600 font-bold' : 'text-slate-500';
+                        const durumRenk = hw.durum === 'Tamamlandı' ? 'bg-green-100 text-green-700' : (gecikmisMi ? 'bg-red-100 text-red-700 font-bold border border-red-200' : 'bg-amber-100 text-amber-700');
+                    %>
+                        <!-- data-durum özelliği filtreleme işlemi için eklendi -->
+                        <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors odev-satiri" data-durum="<%= hw.durum %>">
+                            <td class="px-6 py-4 font-medium text-slate-800"><%= hw.ogrenciAdSoyad || hw.ogrenciId %></td>
+                            <td class="px-6 py-4">
+                                <div class="font-bold text-slate-700"><%= hw.kitap %></div>
+                                <div class="text-xs text-slate-400 mt-0.5"><%= hw.konu %></div>
+                            </td>
+                            <td class="px-6 py-4 <%= tarihRenk %>">
+                                <%= hw.sonTarih %>
+                                <% if(gecikmisMi) { %> <i class="fa-solid fa-circle-exclamation text-xs ml-1"></i> <% } %>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold <%= durumRenk %>">
+                                    <%= hw.durum %>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <a href="/admin/homework-detail/<%= hw.id %>" class="text-blue-600 hover:text-blue-800 font-medium text-sm inline-flex items-center gap-1">
+                                    İncele <i class="fa-solid fa-arrow-right text-xs"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">Henüz atanan ödev bulunmuyor.</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-                    </table>
-                </div>
-            </div>
+<!-- CANLI FİLTRELEME SCRİPTİ -->
+<script>
+    function filtreleOdev(secilenDurum) {
+        const satirlar = document.querySelectorAll('.odev-satiri');
+        
+        satirlar.forEach(satir => {
+            const satirDurum = satir.getAttribute('data-durum');
+            if (secilenDurum === 'Hepsi' || satirDurum === secilenDurum) {
+                satir.style.display = ''; // Göster
+            } else {
+                satir.style.display = 'none'; // Gizle
+            }
+        });
+    }
+</script>
+
 
         </div>
     </main>
