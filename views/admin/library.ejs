@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dijital Kitaplık | Özel Ders Asistanım</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 font-sans flex h-screen overflow-hidden">
+
+    <!-- SOL MENÜ (Dashboard ile aynı) -->
+    <aside class="w-64 bg-slate-800 text-white flex flex-col h-full shadow-2xl">
+        <div class="p-6 text-center border-b border-slate-700">
+            <i class="fa-solid fa-graduation-cap text-3xl text-blue-400 mb-2"></i>
+            <h2 class="text-xl font-bold tracking-wider">Asistanım</h2>
+            <p class="text-slate-400 text-xs mt-1">Öğretmen Paneli</p>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <a href="/admin/dashboard" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-chart-line w-6"></i>
+                <span class="font-medium">Genel Bakış</span>
+            </a>
+            <a href="/admin/students" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-users w-6"></i>
+                <span class="font-medium">Öğrenciler</span>
+            </a>
+            <a href="/admin/library" class="flex items-center px-4 py-3 bg-blue-600 text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-book w-6"></i>
+                <span class="font-medium">Dijital Kitaplık</span>
+            </a>
+            <a href="/admin/homework" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-pen-to-square w-6"></i>
+                <span class="font-medium">Ödev Ata</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- ANA İÇERİK -->
+    <main class="flex-1 flex flex-col h-full overflow-y-auto">
+        <header class="bg-white shadow-sm px-8 py-5 flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-slate-800">Dijital Kitaplık</h1>
+            <button onclick="openBookModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium transition-colors shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i> Yeni Kitap Ekle
+            </button>
+        </header>
+
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <% if (books && books.length > 0) { %>
+                    <% books.forEach(book => { %>
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
+                            <div class="bg-indigo-50 px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+                                <i class="fa-solid fa-book-open text-indigo-500 text-xl"></i>
+                                <h3 class="font-bold text-slate-800"><%= book.kitapAdi %></h3>
+                            </div>
+                            <div class="p-6">
+                                <p class="text-xs font-bold text-slate-400 uppercase mb-3">İçerik (Ünite/Konu)</p>
+                                <ul class="space-y-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
+                                    <% book.icerik.forEach(konu => { %>
+                                        <li class="text-sm text-slate-600 flex items-start gap-2">
+                                            <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i> <%= konu %>
+                                        </li>
+                                    <% }) %>
+                                </ul>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div class="col-span-full bg-white rounded-xl p-10 text-center border border-slate-200 text-slate-500">
+                        <i class="fa-solid fa-books text-4xl text-slate-300 mb-3"></i>
+                        <p>Henüz kitaplığa kaynak eklenmemiş.</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <!-- YENİ KİTAP EKLEME MODALI -->
+    <div id="bookModal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-60 flex items-center justify-center z-50 px-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+            <div class="bg-blue-600 px-6 py-4 flex justify-between items-center text-white">
+                <h3 class="font-bold text-lg">Kütüphaneye Kaynak Ekle</h3>
+                <button onclick="closeBookModal()" class="text-blue-100 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form action="/admin/book-add" method="POST" class="p-6">
+                <div class="mb-5">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Kitap Adı</label>
+                    <input type="text" name="kitapAdi" required placeholder="Örn: 8. Sınıf LGS Soru Bankası" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Konular / Testler (Virgülle ayırın)</label>
+                    <textarea name="konular" required rows="4" placeholder="Örn: Çarpanlar ve Katlar Test 1, Üslü İfadeler Test 1, Karaköklü İfadeler Test 1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    <p class="text-xs text-slate-500 mt-2"><i class="fa-solid fa-circle-info mr-1"></i> Her konuyu veya testi arasına virgül koyarak yazın.</p>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg flex justify-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Kaydet
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openBookModal() { document.getElementById('bookModal').classList.remove('hidden'); }
+        function closeBookModal() { document.getElementById('bookModal').classList.add('hidden'); }
+    </script>
+</body>
+</html>
