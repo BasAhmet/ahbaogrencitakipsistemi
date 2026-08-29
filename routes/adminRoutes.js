@@ -117,13 +117,26 @@ router.get('/library', async (req, res) => {
     }
 });
 
-// Yeni Kitap Ekleme İşlemi (POST)
+// GÜNCELLENEN: Yeni Kitap Ekleme İşlemi (POST)
 router.post('/book-add', async (req, res) => {
-    const { kitapAdi, konular } = req.body;
+    const { kitapAdi, konu, testAdlari, soruSayilari } = req.body;
     try {
-        // Konuları virgülden bölüp diziye (array) çeviriyoruz
-        const icerik = konular.split(',').map(k => k.trim()).filter(k => k.length > 0);
-        await addBook({ kitapAdi, icerik });
+        let testler = [];
+        
+        // Tek test girildiyse string, çoklu girildiyse array gelir. Hepsini array formatına alıyoruz.
+        const adlar = Array.isArray(testAdlari) ? testAdlari : [testAdlari];
+        const sayilar = Array.isArray(soruSayilari) ? soruSayilari : [soruSayilari];
+
+        for(let i = 0; i < adlar.length; i++) {
+            if(adlar[i] && sayilar[i]) {
+                testler.push({ 
+                    ad: adlar[i].trim(), 
+                    soru: parseInt(sayilar[i]) 
+                });
+            }
+        }
+
+        await addBook({ kitapAdi, konu, testler });
         res.redirect('/admin/library');
     } catch (error) {
         console.error("Kitap eklenirken hata:", error);
