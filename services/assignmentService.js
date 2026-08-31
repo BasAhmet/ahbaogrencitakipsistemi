@@ -52,8 +52,24 @@ const getAssignmentsByStudent = async (kursNumarasi) => {
         return [];
     }
 };
+// Tek bir ödevin detaylarını getirme fonksiyonu
+const getHomeworkById = async (id) => {
+    try {
+        const doc = await db.collection('odevler').doc(id).get();
+        if (!doc.exists) {
+            return null;
+        }
+        return { id: doc.id, ...doc.data() };
+    } catch (error) {
+        console.error("Ödev detayı getirme hatası:", error);
+        throw error;
+    }
+};
 
-module.exports = { assignHomework, 
-                  getAssignmentsByStudent };
+module.exports = {
+    assignHomework,
+    getHomeworkById, 
+    getAssignmentsByStudent  
+};
 
 
