@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ödev İnceleme | Özel Ders Asistanım</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm px-8 py-5 flex justify-between items-center z-10">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800">Ödev İnceleme Raporu</h1>
+            <p class="text-sm text-slate-500 mt-1">Öğrencinin teslim ettiği sonuçları ve detayları inceleyin.</p>
+        </div>
+        <a href="/admin/dashboard" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2 shadow-sm">
+            <i class="fa-solid fa-arrow-left"></i> Panele Dön
+        </a>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-8 flex justify-center items-start">
+        <div class="w-full max-w-4xl bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            
+            <div class="bg-blue-600 p-8 text-white flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-5">
+                    <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-3xl">
+                        <i class="fa-solid fa-user-graduate"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold mb-1"><%= hw.ogrenciAdSoyad || hw.ogrenciId %></h2>
+                        <div class="flex gap-4 text-blue-100 text-sm">
+                            <span><i class="fa-solid fa-hashtag mr-1"></i> Kurs No: <%= hw.ogrenciId %></span>
+                            <span><i class="fa-regular fa-calendar-check mr-1"></i> Son Teslim: <%= hw.sonTarih %></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-right">
+                    <span class="inline-block px-4 py-1.5 rounded-full text-sm font-bold shadow-sm bg-white text-slate-800">
+                        Durum: <%= hw.durum %>
+                    </span>
+                </div>
+            </div>
+
+            <div class="p-8 border-b border-slate-100 bg-slate-50 flex items-center gap-4">
+                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-book"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Çalışılan Kaynak</p>
+                    <h3 class="text-lg font-bold text-slate-800"><%= hw.kitap %> <span class="text-slate-400 mx-2">|</span> <span class="text-blue-600"><%= hw.konu %></span></h3>
+                </div>
+            </div>
+
+            <div class="p-8">
+                <% if (hw.durum === 'Tamamlandı' && hw.sonuclar) { %>
+                    <% 
+                        // Başarı Yüzdesi Hesaplama
+                        const d = parseInt(hw.sonuclar.dogru) || 0;
+                        const y = parseInt(hw.sonuclar.yanlis) || 0;
+                        const b = parseInt(hw.sonuclar.bos) || 0;
+                        const toplamSoru = d + y + b;
+                        const basariYuzdesi = toplamSoru > 0 ? Math.round((d / toplamSoru) * 100) : 0;
+                    %>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="bg-green-50 border border-green-100 rounded-2xl p-4 text-center shadow-sm">
+                                <div class="text-green-500 mb-2"><i class="fa-solid fa-check-circle text-2xl"></i></div>
+                                <div class="text-3xl font-black text-green-700 mb-1"><%= d %></div>
+                                <div class="text-xs font-bold text-green-600 uppercase tracking-wide">Doğru</div>
+                            </div>
+                            <div class="bg-red-50 border border-red-100 rounded-2xl p-4 text-center shadow-sm">
+                                <div class="text-red-500 mb-2"><i class="fa-solid fa-times-circle text-2xl"></i></div>
+                                <div class="text-3xl font-black text-red-700 mb-1"><%= y %></div>
+                                <div class="text-xs font-bold text-red-600 uppercase tracking-wide">Yanlış</div>
+                            </div>
+                            <div class="bg-slate-100 border border-slate-200 rounded-2xl p-4 text-center shadow-sm">
+                                <div class="text-slate-400 mb-2"><i class="fa-solid fa-circle-minus text-2xl"></i></div>
+                                <div class="text-3xl font-black text-slate-700 mb-1"><%= b %></div>
+                                <div class="text-xs font-bold text-slate-500 uppercase tracking-wide">Boş</div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col items-center justify-center border-l border-slate-100 pl-8">
+                            <div class="relative w-36 h-36 flex items-center justify-center bg-slate-50 rounded-full border-[8px] <%= basariYuzdesi >= 70 ? 'border-green-500 text-green-600' : (basariYuzdesi >= 40 ? 'border-amber-400 text-amber-500' : 'border-red-500 text-red-600') %> shadow-inner">
+                                <div class="text-center">
+                                    <span class="text-4xl font-black block">%%<%= basariYuzdesi %></span>
+                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Başarı</span>
+                                </div>
+                            </div>
+                            <p class="mt-4 text-sm font-medium text-slate-500 text-center">
+                                <% if(basariYuzdesi >= 70) { %> Harika bir iş çıkarmış! <% } else if(basariYuzdesi >= 40) { %> Konu tekrarı faydalı olabilir. <% } else { %> Acilen desteklenmesi gerekiyor. <% } %>
+                            </p>
+                        </div>
+                    </div>
+
+                <% } else { %>
+                    <div class="text-center py-12">
+                        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-50 text-slate-300 mb-4">
+                            <i class="fa-solid fa-hourglass-half text-4xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-700 mb-2">Öğrenci Henüz Teslim Etmedi</h3>
+                        <p class="text-slate-500">Bu ödevin sonuçları girildiğinde başarı istatistikleri burada görüntülenecektir.</p>
+                    </div>
+                <% } %>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>
