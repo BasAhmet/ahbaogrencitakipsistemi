@@ -1,10 +1,10 @@
 const { db } = require('../config/firebase');
 
-// Mükerrer kontrollü ödev atama fonksiyonu
+// 1. Mükerrer kontrollü ödev atama fonksiyonu (Koleksiyon isimleri düzeltildi)
 const assignHomework = async (ogrenciId, kitap, konu, sonTarih) => {
     try {
-        // 1. Aynı öğrenciye, aynı kitap ve konunun daha önce verilip verilmediğini kontrol et
-        const mevcut = await db.collection('odevler')
+        // 'odevler' yerine 'homeworks' koleksiyonuna bakıyoruz
+        const mevcut = await db.collection('homeworks')
             .where('ogrenciId', '==', ogrenciId)
             .where('kitap', '==', kitap)
             .where('konu', '==', konu)
@@ -14,12 +14,12 @@ const assignHomework = async (ogrenciId, kitap, konu, sonTarih) => {
             return { success: false, message: "Bu ödev bu öğrenciye daha önce atanmış!" };
         }
 
-        // 2. Tabloda öğrenci adının düzgün görünmesi için öğrenciyi bul
-        const ogrenciDoc = await db.collection('ogrenciler').where('kursNumarasi', '==', ogrenciId).get();
-        const ogrenciAdSoyad = ogrenciDoc.empty ? ogrenciId : ogrenciDoc.docs[0].data().adSoyad;
+        // 'ogrenciler' yerine 'students' koleksiyonunda arıyoruz
+        const ogrenciDoc = await db.collection('students').doc(ogrenciId).get();
+        const ogrenciAdSoyad = ogrenciDoc.exists ? ogrenciDoc.data().adSoyad : ogrenciId;
 
-        // 3. Yeni ödevi kaydet
-        await db.collection('odevler').add({
+        // 'odevler' yerine 'homeworks' koleksiyonuna kaydediyoruz
+        await db.collection('homeworks').add({
             ogrenciId,
             ogrenciAdSoyad,
             kitap,
@@ -35,27 +35,11 @@ const assignHomework = async (ogrenciId, kitap, konu, sonTarih) => {
         throw error;
     }
 };
-// Öğrencinin (veya Velinin) Kendi Ödevlerini Görmesi İçin
-const getAssignmentsByStudent = async (kursNumarasi) => {
-    try {
-        // Sadece o öğrenciye ait ödevleri filtrele
-        const snapshot = await db.collection('assignments')
-                                 .where('ogrenciNo', '==', kursNumarasi)
-                                 .get();
-        let assignments = [];
-        snapshot.forEach(doc => {
-            assignments.push({ id: doc.id, ...doc.data() });
-        });
-        return assignments;
-    } catch (error) {
-        console.error("Ödevleri getirme hatası:", error);
-        return [];
-    }
-};
-// Tek bir ödevin detaylarını getirme fonksiyonu
+
+// 2. YENİ: Tek bir ödevin detaylarını getirme fonksiyonu (İnceleme ekranı için)
 const getHomeworkById = async (id) => {
     try {
-        const doc = await db.collection('odevler').doc(id).get();
+        const doc = await db.collection('homeworks').doc(id).get();
         if (!doc.exists) {
             return null;
         }
@@ -66,10 +50,4 @@ const getHomeworkById = async (id) => {
     }
 };
 
-module.exports = {
-    assignHomework,
-    getHomeworkById, 
-    getAssignmentsByStudent  
-};
-
-
+module.exports = { assignHomework, getHomeworkById };
