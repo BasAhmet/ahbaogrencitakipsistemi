@@ -182,44 +182,6 @@ const deleteBook = async (id) => {
     }
 };
 
-// 12. Mükerrer kontrollü ödev atama servisi
-const assignHomework = async (ogrenciId, kitap, konu, sonTarih) => {
-    try {
-        // 1. Aynı ödevin daha önce verilip verilmediğini kontrol et
-        const mevcut = await db.collection('odevler')
-            .where('ogrenciId', '==', ogrenciId)
-            .where('kitap', '==', kitap)
-            .where('konu', '==', konu)
-            .get();
-
-        if (!mevcut.empty) {
-            return { success: false, message: "Bu ödev bu öğrenciye daha önce atanmış!" };
-        }
-
-        // 2. Tabloda ismin görünmesi için öğrencinin adını bul
-        const ogrenciDoc = await db.collection('ogrenciler').where('kursNumarasi', '==', ogrenciId).get();
-        const ogrenciAdSoyad = ogrenciDoc.empty ? ogrenciId : ogrenciDoc.docs[0].data().adSoyad;
-
-        // 3. Ödevi güvenle kaydet
-        await db.collection('odevler').add({
-            ogrenciId,
-            ogrenciAdSoyad,
-            kitap,
-            konu,
-            sonTarih,
-            durum: 'Bekliyor',
-            eklenmeTarihi: new Date()
-        });
-
-        return { success: true };
-    } catch (error) {
-        console.error("Ödev atama servisi hatası:", error);
-        throw error;
-    }
-};
-
-
-
 // Modülleri dışa aktarma
 module.exports = { 
     addStudent, 
@@ -232,6 +194,5 @@ module.exports = {
     getAllHomeworks,
     addBook,
     getAllBooks,
-    deleteBook,
-    assignHomework
+    deleteBook
 };
