@@ -8,7 +8,8 @@ const { addStudent,
        getAllHomeworks, 
        addBook, 
        getAllBooks,
-       deleteBook
+       deleteBook,
+       getHomeworkById
       } = require('../services/userService');
 
 // Öğretmen Yönetim Paneli Ana Sayfası
@@ -142,7 +143,7 @@ router.get('/library', async (req, res) => {
     }
 });
 
-// Yeni Kitap Ekleme İşlemi (POST)
+// Kitap Ekleme İşlemi (POST)
 router.post('/book-add', async (req, res) => {
     const { kitapAdi, konu, testAdlari, soruSayilari } = req.body;
     try {
@@ -177,6 +178,24 @@ router.get('/book-delete/:id', async (req, res) => {
     } catch (error) {
         console.error("Kitap silme hatası:", error);
         res.redirect('/admin/library');
+    }
+});
+
+// Ödev İnceleme Sayfası Rotası
+router.get('/homework-detail/:id', async (req, res) => {
+    try {
+        const odevId = req.params.id;
+        const odevDetay = await getHomeworkById(odevId);
+
+        if (!odevDetay) {
+            return res.send("<script>alert('Ödev bulunamadı!'); window.location.href='/admin/dashboard';</script>");
+        }
+
+        // Veriyi şablona gönderiyoruz
+        res.render('admin/homework-detail', { hw: odevDetay });
+    } catch (error) {
+        console.error("Ödev detay sayfası yüklenemedi:", error);
+        res.redirect('/admin/dashboard');
     }
 });
 
